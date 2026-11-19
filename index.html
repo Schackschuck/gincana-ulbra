@@ -161,6 +161,11 @@ function render(){
   $("#admin").hidden = !admin;
   if (admin) renderAdmin();
 
+  renderView();
+}
+
+/* Só a lista de provas/alunos: usado pela busca, filtros e abas, para não redesenhar o painel do organizador */
+function renderView(){
   document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
   ({provas:viewProvas, alunos:viewAlunos})[tab]();
 }
@@ -182,7 +187,7 @@ function provaPassa(p, f){
 function chip(st){ return `<span class="chip s-${st}">${STATUS[st] || st}</span>`; }
 
 function cardProva(p){
-  const tot = p.atribuicoes.length, feitos = p.atribuicoes.filter(a => a.status === "enviada").length;
+  const tot = p.atribuicoes.length, feitos = p.atribuicoes.filter(a => a.status === "cumprida" || a.status === "enviada").length;
   const pct = tot ? Math.round(feitos / tot * 100) : 0;
   const lis = p.atribuicoes.map(a => {
     const al = aluno(a.alunoId); if (!al) return "";
@@ -197,7 +202,7 @@ function cardProva(p){
       ${admin ? `<div style="white-space:nowrap"><button class="btn sm" data-edit="${p.id}">Editar</button></div>` : ""}
     </div>
     ${p.descricao ? `<div class="desc">${esc(p.descricao)}</div>` : ""}
-    <div class="meta">${p.prazo ? "Prazo: " + fmtData(p.prazo) + " · " : ""}${feitos}/${tot} enviadas</div>
+    <div class="meta">${p.prazo ? "Prazo: " + fmtData(p.prazo) + " · " : ""}${feitos}/${tot} concluídas</div>
     <div class="prog"><i style="width:${pct}%"></i></div>
     ${tot ? `<ul class="at">${lis}</ul>` : `<div class="meta">Nenhum aluno atribuído ainda.</div>`}
   </div>`;
@@ -235,8 +240,12 @@ function viewAlunos(){
 }
 
 /* ---------------- Modo organizador ---------------- */
+const CAMPOS_PAINEL = ["aCat","aAlunos","gOwner","gRepo","gToken"];
 function renderAdmin(){
   const cfg = JSON.parse(lsGet(LS_CFG) || "{}");
+  const digitado = {};
+  for (const id of CAMPOS_PAINEL) { const el = document.getElementById(id); if (el) digitado[id] = el.value; }
+  const det = $("#admin details"), detAberto = det ? det.open : null;
   $("#admin").innerHTML = `
   <div class="admin-panel">
     <h3>Painel do organizador</h3>
@@ -271,6 +280,8 @@ function renderAdmin(){
       <span id="gMsg" class="meta"></span>
     </div>
   </div>`;
+  for (const id in digitado) document.getElementById(id).value = digitado[id];
+  if (detAberto !== null) $("#admin details").open = detAberto;
 }
 
 function guessOwner(){ return location.hostname.endsWith(".github.io") ? location.hostname.split(".")[0] : ""; }
@@ -341,7 +352,7 @@ function baixar(){
 /* ---------------- Eventos ---------------- */
 document.addEventListener("click", e => {
   const t = e.target;
-  if (t.closest("nav.tabs button")) { tab = t.closest("button").dataset.tab; render(); return; }
+  if (t.closest("nav.tabs button")) { tab = t.closest("button").dataset.tab; renderView(); return; }
   if (t.id === "btnAdmin") {
     admin = !admin; lsSet("gincana_admin", admin ? "1" : "0");
     if (admin) { const r = lsGet(LS_DRAFT); if (r) try { D = JSON.parse(r); } catch(_){} } else D = structuredClone(publicado);
@@ -351,9 +362,10 @@ document.addEventListener("click", e => {
   if (t.dataset.edit) return dlgProva(t.dataset.edit);
   if (t.id === "aNovaProva") return dlgProva(null);
   if (t.id === "aSalvaTit") { D.titulo = $("#aTitulo").value.trim() || "Gincana Escolar"; return salvarRascunho(); }
-  if (t.id === "aAddCat") { const n = $("#aCat").value.trim(); if (n) { D.categorias.push({id: uid("c"), nome: n}); salvarRascunho(); } return; }
+  if (t.id === "aAddCat") { const n = $("#aCat").value.trim(); if (n) { D.categorias.push({id: uid("c"), nome: n}); $("#aCat").value = ""; salvarRascunho(); } return; }
   if (t.id === "aAddAl") {
     $("#aAlunos").value.split(/\n/).map(s => s.trim()).filter(Boolean).forEach(n => D.alunos.push({id: uid("a"), nome: n}));
+    $("#aAlunos").value = "";
     return salvarRascunho();
   }
   if (t.dataset.delcat) { if (confirm("Remover categoria? As provas dela ficam em \"Sem categoria\".")) { D.categorias = D.categorias.filter(c => c.id !== t.dataset.delcat); salvarRascunho(); } return; }
@@ -375,7 +387,7 @@ document.addEventListener("change", e => {
   const at = D.provas.find(p => p.id === pid)?.atribuicoes.find(a => a.alunoId === aid);
   if (at) { at.status = e.target.value; salvarRascunho(); }
 });
-["busca","fCat","fStatus"].forEach(id => $("#" + id).addEventListener("input", () => render()));
+["busca","fCat","fStatus"].forEach(id => $("#" + id).addEventListener("input", () => renderView()));
 
 carregar();
 </script>
