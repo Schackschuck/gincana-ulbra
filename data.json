@@ -1,19 +1,33 @@
 {
   "titulo": "Gincana Escolar",
   "atualizado": "",
-  "equipes": [
-    { "id": "e1", "nome": "Equipe Azul", "cor": "#2563eb" },
-    { "id": "e2", "nome": "Equipe Vermelha", "cor": "#dc2626" }
-  ],
   "alunos": [
-    { "id": "a1", "nome": "Aluno Exemplo 1", "equipeId": "e1" },
-    { "id": "a2", "nome": "Aluno Exemplo 2", "equipeId": "e1" },
-    { "id": "a3", "nome": "Aluno Exemplo 3", "equipeId": "e2" }
+    {
+      "id": "a1",
+      "nome": "Aluno Exemplo 1"
+    },
+    {
+      "id": "a2",
+      "nome": "Aluno Exemplo 2"
+    },
+    {
+      "id": "a3",
+      "nome": "Aluno Exemplo 3"
+    }
   ],
   "categorias": [
-    { "id": "c1", "nome": "Provas culturais" },
-    { "id": "c2", "nome": "Provas esportivas" },
-    { "id": "c3", "nome": "Arrecadação" }
+    {
+      "id": "c1",
+      "nome": "Provas culturais"
+    },
+    {
+      "id": "c2",
+      "nome": "Provas esportivas"
+    },
+    {
+      "id": "c3",
+      "nome": "Arrecadação"
+    }
   ],
   "provas": [
     {
@@ -23,8 +37,14 @@
       "descricao": "Descrição da prova. Apague este exemplo no modo organizador.",
       "prazo": "",
       "atribuicoes": [
-        { "alunoId": "a1", "status": "pendente" },
-        { "alunoId": "a3", "status": "enviada" }
+        {
+          "alunoId": "a1",
+          "status": "pendente"
+        },
+        {
+          "alunoId": "a3",
+          "status": "enviada"
+        }
       ]
     }
   ]
