@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gincana Escolar — Provas</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#fff; --ink:#1c2030; --muted:#6b7085; --line:#e3e6ef;
+    --accent:#4f46e5; --accent-soft:#eef0ff;
+    --pend:#9ca3af; --and:#d97706; --cump:#2563eb; --env:#16a34a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+  header{background:var(--ink);color:#fff;padding:20px 16px 14px}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+  header .wrap{padding:0}
+  h1{margin:0;font-size:1.6rem}
+  .sub{color:#b9bdd0;font-size:.9rem;margin-top:4px}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer;font:inherit;font-size:.9rem}
+  .btn:hover{border-color:var(--accent)}
+  .btn.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.dan{color:#b91c1c}
+  .btn:disabled{opacity:.45;cursor:default}
+  .btn.sm{padding:3px 8px;font-size:.8rem}
+  header .btn{background:transparent;color:#fff;border-color:#4a4f66}
+  nav.tabs{display:flex;gap:6px;margin:16px 0 10px;flex-wrap:wrap}
+  nav.tabs button{border:0;background:transparent;padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit;color:var(--muted)}
+  nav.tabs button.on{background:var(--accent);color:#fff}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  input,select,textarea{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+  textarea{width:100%;min-height:60px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .cat-h{margin:22px 0 10px;font-size:1.1rem;display:flex;align-items:center;gap:8px}
+  .cat-h .n{font-size:.8rem;color:var(--muted);font-weight:400}
+  .prova-nome{font-weight:600;font-size:1.02rem}
+  .desc{color:var(--muted);font-size:.9rem;margin:4px 0 8px;white-space:pre-wrap}
+  .meta{font-size:.8rem;color:var(--muted)}
+  .prog{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0}
+  .prog i{display:block;height:100%;background:var(--env)}
+  ul.at{list-style:none;padding:0;margin:6px 0 0}
+  ul.at li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-top:1px dashed var(--line);font-size:.92rem}
+  .chip{font-size:.75rem;padding:2px 8px;border-radius:99px;color:#fff;white-space:nowrap}
+  .s-pendente{background:var(--pend)} .s-andamento{background:var(--and)} .s-cumprida{background:var(--cump)} .s-enviada{background:var(--env)}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .empty{color:var(--muted);text-align:center;padding:30px}
+  .admin-panel{background:var(--accent-soft);border:1px solid #d6d9ff;border-radius:12px;padding:14px;margin-bottom:14px}
+  .admin-panel h3{margin:0 0 8px;font-size:1rem}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+  .row > *{flex:1 1 160px}
+  .row > .btn{flex:0 0 auto}
+  .pill-list{display:flex;flex-wrap:wrap;gap:6px}
+  .pill{background:#fff;border:1px solid var(--line);border-radius:99px;padding:3px 6px 3px 10px;font-size:.85rem;display:flex;align-items:center;gap:6px}
+  .pill button{border:0;background:transparent;cursor:pointer;color:#b91c1c;font-size:1rem;line-height:1}
+  .checks{display:flex;flex-wrap:wrap;gap:6px 14px;max-height:160px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px}
+  .checks label{font-size:.88rem;display:flex;align-items:center;gap:5px}
+  .warn{background:#fff7e6;border:1px solid #f5d28a;color:#7a5200;padding:8px 12px;border-radius:8px;font-size:.88rem;margin-bottom:12px}
+  .ok{background:#e9f9ee;border-color:#9fdcb2;color:#155f30}
+  dialog{border:0;border-radius:14px;padding:18px;max-width:560px;width:94vw}
+  dialog::backdrop{background:rgba(0,0,0,.4)}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);margin-bottom:6px}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);font-size:.92rem}
+  th{background:#fafbff;color:var(--muted);font-weight:600}
+  footer{color:var(--muted);font-size:.8rem;text-align:center;padding:30px 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap top">
+    <div>
+      <h1 id="titulo">Gincana Escolar</h1>
+      <div class="sub" id="atualizado">Carregando…</div>
+    </div>
+    <button class="btn" id="btnAdmin">Modo organizador</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="aviso"></div>
+  <div id="admin" hidden></div>
+
+  <nav class="tabs">
+    <button data-tab="provas" class="on">Provas por categoria</button>
+    <button data-tab="alunos">Por aluno</button>
+    <button data-tab="equipes">Equipes</button>
+  </nav>
+
+  <div class="bar">
+    <input id="busca" placeholder="Buscar prova ou aluno…" style="flex:1 1 220px">
+    <select id="fCat"><option value="">Todas as categorias</option></select>
+    <select id="fStatus">
+      <option value="">Todos os status</option>
+      <option value="pendente">Pendente</option>
+      <option value="andamento">Em andamento</option>
+      <option value="cumprida">Cumprida</option>
+      <option value="enviada">Enviada</option>
+    </select>
+  </div>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--pend)"></span>Pendente</span>
+    <span><span class="dot" style="background:var(--and)"></span>Em andamento</span>
+    <span><span class="dot" style="background:var(--cump)"></span>Cumprida</span>
+    <span><span class="dot" style="background:var(--env)"></span>Enviada</span>
+  </div>
+
+  <section id="view"></section>
+</main>
+<footer>Site da gincana · publicado no GitHub Pages</footer>
+
+<dialog id="dlg"></dialog>
+
+<script>
+const STATUS = {pendente:"Pendente", andamento:"Em andamento", cumprida:"Cumprida", enviada:"Enviada"};
+const LS_DRAFT = "gincana_rascunho", LS_CFG = "gincana_github";
+let D = null, publicado = null, admin = false, tab = "provas";
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = p => p + Math.random().toString(36).slice(2, 8);
+const lsGet = k => { try { return localStorage.getItem(k); } catch(e) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} };
+const lsDel = k => { try { localStorage.removeItem(k); } catch(e) {} };
+
+const aluno = id => D.alunos.find(a => a.id === id);
+const equipe = id => D.equipes.find(e => e.id === id);
+const categoria = id => D.categorias.find(c => c.id === id);
+const fmtData = s => s ? new Date(s + "T12:00").toLocaleDateString("pt-BR") : "";
+
+async function carregar(){
+  try {
+    const r = await fetch("data.json?t=" + Date.now(), {cache:"no-store"});
+    publicado = await r.json();
+  } catch(e) {
+    publicado = {titulo:"Gincana Escolar", equipes:[], alunos:[], categorias:[], provas:[]};
+  }
+  for (const k of ["equipes","alunos","categorias","provas"]) publicado[k] ||= [];
+  D = structuredClone(publicado);
+  admin = new URLSearchParams(location.search).has("admin") || lsGet("gincana_admin") === "1";
+  if (admin) { const r = lsGet(LS_DRAFT); if (r) { try { D = JSON.parse(r); } catch(e){} } }
+  render();
+}
+
+function salvarRascunho(){ lsSet(LS_DRAFT, JSON.stringify(D)); render(); }
+function temRascunho(){ return JSON.stringify(D) !== JSON.stringify(publicado); }
+
+/* ---------------- Visualização ---------------- */
+function render(){
+  document.title = (D.titulo || "Gincana") + " — Provas";
+  $("#titulo").textContent = D.titulo || "Gincana Escolar";
+  $("#atualizado").textContent = D.atualizado ? "Atualizado em " + new Date(D.atualizado).toLocaleString("pt-BR") : "Lista de provas e responsáveis";
+  $("#btnAdmin").textContent = admin ? "Sair do modo organizador" : "Modo organizador";
+
+  const fc = $("#fCat"), atual = fc.value;
+  fc.innerHTML = '<option value="">Todas as categorias</option>' + D.categorias.map(c => `<option value="${c.id}">${esc(c.nome)}</option>`).join("");
+  fc.value = atual;
+
+  $("#aviso").innerHTML = admin && temRascunho()
+    ? `<div class="warn">Você tem alterações <b>não publicadas</b>. Os outros ainda veem a versão antiga. Clique em <b>Publicar</b> no painel abaixo.</div>` : "";
+
+  $("#admin").hidden = !admin;
+  if (admin) renderAdmin();
+
+  document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  ({provas:viewProvas, alunos:viewAlunos, equipes:viewEquipes})[tab]();
+}
+
+function filtros(){
+  return {q: $("#busca").value.trim().toLowerCase(), cat: $("#fCat").value, st: $("#fStatus").value};
+}
+
+function provaPassa(p, f){
+  if (f.cat && p.categoriaId !== f.cat) return false;
+  if (f.st && !p.atribuicoes.some(a => a.status === f.st)) return false;
+  if (f.q){
+    const txt = (p.nome + " " + (p.descricao||"") + " " + p.atribuicoes.map(a => aluno(a.alunoId)?.nome || "").join(" ")).toLowerCase();
+    if (!txt.includes(f.q)) return false;
+  }
+  return true;
+}
+
+function chip(st){ return `<span class="chip s-${st}">${STATUS[st] || st}</span>`; }
+
+function cardProva(p){
+  const tot = p.atribuicoes.length, feitos = p.atribuicoes.filter(a => a.status === "enviada").length;
+  const pct = tot ? Math.round(feitos / tot * 100) : 0;
+  const lis = p.atribuicoes.map(a => {
+    const al = aluno(a.alunoId); if (!al) return "";
+    const eq = equipe(al.equipeId);
+    const dot = eq ? `<span class="dot" style="background:${esc(eq.cor)}" title="${esc(eq.nome)}"></span>` : "";
+    const ctrl = admin
+      ? `<select data-st="${p.id}|${a.alunoId}">${Object.entries(STATUS).map(([k,v]) => `<option value="${k}" ${k===a.status?"selected":""}>${v}</option>`).join("")}</select>`
+      : chip(a.status);
+    return `<li><span>${dot}${esc(al.nome)}</span>${ctrl}</li>`;
+  }).join("");
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;gap:8px">
+      <div class="prova-nome">${esc(p.nome)}</div>
+      ${admin ? `<div style="white-space:nowrap"><button class="btn sm" data-edit="${p.id}">Editar</button></div>` : ""}
+    </div>
+    ${p.descricao ? `<div class="desc">${esc(p.descricao)}</div>` : ""}
+    <div class="meta">${p.prazo ? "Prazo: " + fmtData(p.prazo) + " · " : ""}${feitos}/${tot} enviadas</div>
+    <div class="prog"><i style="width:${pct}%"></i></div>
+    ${tot ? `<ul class="at">${lis}</ul>` : `<div class="meta">Nenhum aluno atribuído ainda.</div>`}
+  </div>`;
+}
+
+function viewProvas(){
+  const f = filtros();
+  const cats = [...D.categorias, {id:"", nome:"Sem categoria"}];
+  let html = "";
+  for (const c of cats){
+    const ps = D.provas.filter(p => (p.categoriaId || "") === c.id && (c.id || !categoria(p.categoriaId)) && provaPassa(p, f));
+    if (!ps.length) continue;
+    html += `<h2 class="cat-h">${esc(c.nome)} <span class="n">${ps.length} prova${ps.length>1?"s":""}</span></h2><div class="grid">${ps.map(cardProva).join("")}</div>`;
+  }
+  $("#view").innerHTML = html || `<div class="empty">Nenhuma prova encontrada.</div>`;
+}
+
+function viewAlunos(){
+  const f = filtros();
+  const linhas = [];
+  for (const al of [...D.alunos].sort((a,b) => a.nome.localeCompare(b.nome))){
+    const itens = D.provas.flatMap(p => p.atribuicoes.filter(a => a.alunoId === al.id).map(a => ({p, a})))
+      .filter(({p, a}) => (!f.cat || p.categoriaId === f.cat) && (!f.st || a.status === f.st));
+    const txt = (al.nome + " " + itens.map(i => i.p.nome).join(" ")).toLowerCase();
+    if (f.q && !txt.includes(f.q)) continue;
+    if ((f.cat || f.st) && !itens.length) continue;
+    const eq = equipe(al.equipeId);
+    linhas.push(`<tr>
+      <td>${eq ? `<span class="dot" style="background:${esc(eq.cor)}"></span>` : ""}<b>${esc(al.nome)}</b>${eq ? `<div class="meta">${esc(eq.nome)}</div>` : ""}</td>
+      <td>${itens.length ? itens.map(({p,a}) => `<div style="margin:3px 0">${chip(a.status)} ${esc(p.nome)} <span class="meta">${esc(categoria(p.categoriaId)?.nome || "")}</span></div>`).join("") : `<span class="meta">Sem provas</span>`}</td>
+    </tr>`);
+  }
+  $("#view").innerHTML = linhas.length
+    ? `<table><thead><tr><th style="width:30%">Aluno</th><th>Provas</th></tr></thead><tbody>${linhas.join("")}</tbody></table>`
+    : `<div class="empty">Nenhum aluno encontrado.</div>`;
+}
+
+function viewEquipes(){
+  const grupos = [...D.equipes, {id:"", nome:"Sem equipe", cor:"#9ca3af"}];
+  const html = grupos.map(eq => {
+    const membros = D.alunos.filter(a => (a.equipeId || "") === eq.id && (eq.id || !equipe(a.equipeId)));
+    if (!eq.id && !membros.length) return "";
+    const ats = D.provas.flatMap(p => p.atribuicoes.filter(a => membros.some(m => m.id === a.alunoId)));
+    const env = ats.filter(a => a.status === "enviada").length;
+    const pct = ats.length ? Math.round(env / ats.length * 100) : 0;
+    return `<div class="card">
+      <div class="prova-nome"><span class="dot" style="background:${esc(eq.cor)}"></span>${esc(eq.nome)}</div>
+      <div class="meta">${membros.length} aluno(s) · ${env}/${ats.length} provas enviadas</div>
+      <div class="prog"><i style="width:${pct}%"></i></div>
+      <div class="desc">${membros.map(m => esc(m.nome)).join(", ") || "—"}</div>
+    </div>`;
+  }).join("");
+  $("#view").innerHTML = html ? `<div class="grid">${html}</div>` : `<div class="empty">Nenhuma equipe cadastrada.</div>`;
+}
+
+/* ---------------- Modo organizador ---------------- */
+function renderAdmin(){
+  const cfg = JSON.parse(lsGet(LS_CFG) || "{}");
+  const optEq = '<option value="">Sem equipe</option>' + D.equipes.map(e => `<option value="${e.id}">${esc(e.nome)}</option>`).join("");
+  $("#admin").innerHTML = `
+  <div class="admin-panel">
+    <h3>Painel do organizador</h3>
+    <div class="row">
+      <input id="aTitulo" value="${esc(D.titulo)}" placeholder="Nome da gincana">
+      <button class="btn" id="aSalvaTit">Salvar nome</button>
+      <button class="btn pri" id="aNovaProva">+ Nova prova</button>
+    </div>
+
+    <div class="row"><b style="flex:0 0 auto">Categorias:</b>
+      <input id="aCat" placeholder="Nova categoria (ex.: Provas culturais)"><button class="btn" id="aAddCat">Adicionar</button></div>
+    <div class="pill-list" style="margin-bottom:12px">${D.categorias.map(c => `<span class="pill">${esc(c.nome)}<button title="Remover" data-delcat="${c.id}">×</button></span>`).join("") || '<span class="meta">Nenhuma</span>'}</div>
+
+    <div class="row"><b style="flex:0 0 auto">Equipes:</b>
+      <input id="aEq" placeholder="Nova equipe (opcional)"><input id="aEqCor" type="color" value="#4f46e5" style="flex:0 0 50px;padding:2px">
+      <button class="btn" id="aAddEq">Adicionar</button></div>
+    <div class="pill-list" style="margin-bottom:12px">${D.equipes.map(e => `<span class="pill"><span class="dot" style="background:${esc(e.cor)}"></span>${esc(e.nome)}<button title="Remover" data-deleq="${e.id}">×</button></span>`).join("") || '<span class="meta">Nenhuma</span>'}</div>
+
+    <div class="row"><b style="flex:0 0 auto">Alunos:</b>
+      <textarea id="aAlunos" placeholder="Um nome por linha (pode colar uma lista)" style="min-height:38px"></textarea>
+      <select id="aAlEq">${optEq}</select>
+      <button class="btn" id="aAddAl">Adicionar</button></div>
+    <div class="pill-list" style="margin-bottom:12px">${D.alunos.map(a => `<span class="pill">${equipe(a.equipeId) ? `<span class="dot" style="background:${esc(equipe(a.equipeId).cor)}"></span>` : ""}${esc(a.nome)}<button title="Remover" data-delal="${a.id}">×</button></span>`).join("") || '<span class="meta">Nenhum</span>'}</div>
+
+    <details ${cfg.token ? "" : "open"} style="margin-top:6px">
+      <summary><b>Publicar para todos</b> ${cfg.token ? '<span class="meta">(GitHub configurado)</span>' : ""}</summary>
+      <p class="meta">As alterações ficam salvas só neste navegador até você publicar. Publicar grava o arquivo <code>data.json</code> no repositório do GitHub; o site atualiza para todos em cerca de 1 minuto.</p>
+      <div class="row">
+        <input id="gOwner" placeholder="Usuário do GitHub" value="${esc(cfg.owner || guessOwner())}">
+        <input id="gRepo" placeholder="Repositório" value="${esc(cfg.repo || guessRepo())}">
+        <input id="gToken" type="password" placeholder="Token de acesso (fica só neste navegador)" value="${esc(cfg.token || "")}">
+      </div>
+    </details>
+    <div class="row" style="margin-top:8px">
+      <button class="btn pri" id="gPub" ${temRascunho() ? "" : "disabled"}>Publicar</button>
+      <button class="btn" id="gBaixar">Baixar data.json</button>
+      <button class="btn dan" id="gDesc" ${temRascunho() ? "" : "disabled"}>Descartar alterações</button>
+      <span id="gMsg" class="meta"></span>
+    </div>
+  </div>`;
+}
+
+function guessOwner(){ return location.hostname.endsWith(".github.io") ? location.hostname.split(".")[0] : ""; }
+function guessRepo(){
+  if (!location.hostname.endsWith(".github.io")) return "";
+  const seg = location.pathname.split("/").filter(Boolean)[0];
+  return seg && !seg.includes(".") ? seg : location.hostname;
+}
+
+function dlgProva(id){
+  const p = id ? D.provas.find(x => x.id === id) : {id:"", nome:"", categoriaId:D.categorias[0]?.id || "", descricao:"", prazo:"", atribuicoes:[]};
+  const sel = new Set(p.atribuicoes.map(a => a.alunoId));
+  const d = $("#dlg");
+  d.innerHTML = `<h3 style="margin-top:0">${id ? "Editar prova" : "Nova prova"}</h3>
+    <div class="row"><input id="pNome" placeholder="Nome da prova" value="${esc(p.nome)}"></div>
+    <div class="row"><select id="pCat"><option value="">Sem categoria</option>${D.categorias.map(c => `<option value="${c.id}" ${c.id===p.categoriaId?"selected":""}>${esc(c.nome)}</option>`).join("")}</select>
+      <input id="pPrazo" type="date" value="${esc(p.prazo)}" title="Prazo (opcional)"></div>
+    <div class="row"><textarea id="pDesc" placeholder="Descrição / regras (opcional)">${esc(p.descricao)}</textarea></div>
+    <div class="meta" style="margin-bottom:4px">Alunos que vão fazer esta prova:</div>
+    <input id="pFiltro" placeholder="Filtrar alunos…" style="width:100%;margin-bottom:6px">
+    <div class="checks" id="pChecks">${D.alunos.map(a => `<label data-n="${esc(a.nome.toLowerCase())}"><input type="checkbox" value="${a.id}" ${sel.has(a.id)?"checked":""}>${esc(a.nome)}</label>`).join("") || '<span class="meta">Cadastre alunos primeiro.</span>'}</div>
+    <div class="row" style="margin-top:14px;justify-content:space-between">
+      ${id ? `<button class="btn dan" id="pDel">Excluir prova</button>` : "<span></span>"}
+      <span style="display:flex;gap:8px;flex:0 0 auto"><button class="btn" id="pCancel">Cancelar</button><button class="btn pri" id="pOk">Salvar</button></span>
+    </div>`;
+  d.showModal();
+  $("#pFiltro").oninput = e => { const q = e.target.value.toLowerCase(); d.querySelectorAll("#pChecks label").forEach(l => l.hidden = !l.dataset.n.includes(q)); };
+  $("#pCancel").onclick = () => d.close();
+  if (id) $("#pDel").onclick = () => { if (confirm("Excluir esta prova?")) { D.provas = D.provas.filter(x => x.id !== id); d.close(); salvarRascunho(); } };
+  $("#pOk").onclick = () => {
+    const nome = $("#pNome").value.trim(); if (!nome) { $("#pNome").focus(); return; }
+    const marcados = [...d.querySelectorAll("#pChecks input:checked")].map(i => i.value);
+    const antigos = Object.fromEntries(p.atribuicoes.map(a => [a.alunoId, a.status]));
+    const novo = {id: p.id || uid("p"), nome, categoriaId: $("#pCat").value, descricao: $("#pDesc").value.trim(), prazo: $("#pPrazo").value,
+      atribuicoes: marcados.map(aid => ({alunoId: aid, status: antigos[aid] || "pendente"}))};
+    if (id) D.provas[D.provas.findIndex(x => x.id === id)] = novo; else D.provas.push(novo);
+    d.close(); salvarRascunho();
+  };
+}
+
+async function publicar(){
+  const owner = $("#gOwner").value.trim(), repo = $("#gRepo").value.trim(), token = $("#gToken").value.trim();
+  const msg = $("#gMsg");
+  if (!owner || !repo || !token) { msg.textContent = "Preencha usuário, repositório e token."; $("details").open = true; return; }
+  lsSet(LS_CFG, JSON.stringify({owner, repo, token}));
+  msg.textContent = "Publicando…";
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/data.json`;
+  const h = {Authorization: "Bearer " + token, Accept: "application/vnd.github+json"};
+  try {
+    const cur = await fetch(url, {headers: h, cache: "no-store"});
+    const sha = cur.ok ? (await cur.json()).sha : undefined;
+    const dados = {...D, atualizado: new Date().toISOString()};
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(dados, null, 2))));
+    const r = await fetch(url, {method: "PUT", headers: h, body: JSON.stringify({message: "Atualiza provas da gincana", content, sha})});
+    if (!r.ok) throw new Error((await r.json()).message || r.status);
+    D = dados; publicado = structuredClone(dados); lsDel(LS_DRAFT); render();
+    $("#gMsg").textContent = "Publicado! O site atualiza para todos em ~1 minuto.";
+  } catch(e) {
+    msg.textContent = "Erro ao publicar: " + e.message + " (confira o token e o nome do repositório)";
+  }
+}
+
+function baixar(){
+  const b = new Blob([JSON.stringify({...D, atualizado: new Date().toISOString()}, null, 2)], {type: "application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "data.json"; a.click();
+}
+
+/* ---------------- Eventos ---------------- */
+document.addEventListener("click", e => {
+  const t = e.target;
+  if (t.closest("nav.tabs button")) { tab = t.closest("button").dataset.tab; render(); return; }
+  if (t.id === "btnAdmin") {
+    admin = !admin; lsSet("gincana_admin", admin ? "1" : "0");
+    if (admin) { const r = lsGet(LS_DRAFT); if (r) try { D = JSON.parse(r); } catch(_){} } else D = structuredClone(publicado);
+    render(); return;
+  }
+  if (!admin) return;
+  if (t.dataset.edit) return dlgProva(t.dataset.edit);
+  if (t.id === "aNovaProva") return dlgProva(null);
+  if (t.id === "aSalvaTit") { D.titulo = $("#aTitulo").value.trim() || "Gincana Escolar"; return salvarRascunho(); }
+  if (t.id === "aAddCat") { const n = $("#aCat").value.trim(); if (n) { D.categorias.push({id: uid("c"), nome: n}); salvarRascunho(); } return; }
+  if (t.id === "aAddEq") { const n = $("#aEq").value.trim(); if (n) { D.equipes.push({id: uid("e"), nome: n, cor: $("#aEqCor").value}); salvarRascunho(); } return; }
+  if (t.id === "aAddAl") {
+    const eq = $("#aAlEq").value;
+    $("#aAlunos").value.split(/\n/).map(s => s.trim()).filter(Boolean).forEach(n => D.alunos.push({id: uid("a"), nome: n, equipeId: eq}));
+    return salvarRascunho();
+  }
+  if (t.dataset.delcat) { if (confirm("Remover categoria? As provas dela ficam em \"Sem categoria\".")) { D.categorias = D.categorias.filter(c => c.id !== t.dataset.delcat); salvarRascunho(); } return; }
+  if (t.dataset.deleq) { D.equipes = D.equipes.filter(x => x.id !== t.dataset.deleq); D.alunos.forEach(a => { if (a.equipeId === t.dataset.deleq) a.equipeId = ""; }); return salvarRascunho(); }
+  if (t.dataset.delal) {
+    if (confirm("Remover aluno? Ele sai de todas as provas.")) {
+      D.alunos = D.alunos.filter(a => a.id !== t.dataset.delal);
+      D.provas.forEach(p => p.atribuicoes = p.atribuicoes.filter(a => a.alunoId !== t.dataset.delal));
+      salvarRascunho();
+    }
+    return;
+  }
+  if (t.id === "gPub") return publicar();
+  if (t.id === "gBaixar") return baixar();
+  if (t.id === "gDesc") { if (confirm("Descartar tudo que não foi publicado?")) { D = structuredClone(publicado); lsDel(LS_DRAFT); render(); } }
+});
+document.addEventListener("change", e => {
+  const s = e.target.dataset?.st; if (!s || !admin) return;
+  const [pid, aid] = s.split("|");
+  const at = D.provas.find(p => p.id === pid)?.atribuicoes.find(a => a.alunoId === aid);
+  if (at) { at.status = e.target.value; salvarRascunho(); }
+});
+["busca","fCat","fStatus"].forEach(id => $("#" + id).addEventListener("input", () => render()));
+
+carregar();
+</script>
+</body>
+</html>
