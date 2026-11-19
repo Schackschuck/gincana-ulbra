@@ -1,51 +1,7 @@
 {
   "titulo": "Gincana Escolar",
   "atualizado": "",
-  "alunos": [
-    {
-      "id": "a1",
-      "nome": "Aluno Exemplo 1"
-    },
-    {
-      "id": "a2",
-      "nome": "Aluno Exemplo 2"
-    },
-    {
-      "id": "a3",
-      "nome": "Aluno Exemplo 3"
-    }
-  ],
-  "categorias": [
-    {
-      "id": "c1",
-      "nome": "Provas culturais"
-    },
-    {
-      "id": "c2",
-      "nome": "Provas esportivas"
-    },
-    {
-      "id": "c3",
-      "nome": "Arrecadação"
-    }
-  ],
-  "provas": [
-    {
-      "id": "p1",
-      "nome": "Prova de exemplo",
-      "categoriaId": "c1",
-      "descricao": "Descrição da prova. Apague este exemplo no modo organizador.",
-      "prazo": "",
-      "atribuicoes": [
-        {
-          "alunoId": "a1",
-          "status": "pendente"
-        },
-        {
-          "alunoId": "a3",
-          "status": "enviada"
-        }
-      ]
-    }
-  ]
+  "alunos": [],
+  "categorias": [],
+  "provas": []
 }
