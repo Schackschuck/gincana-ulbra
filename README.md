@@ -1,6 +1,6 @@
 # gincana-ulbra
 
-Site da nossa equipe na gincana escolar. Mostra as provas que a escola passou, separadas por categoria, e quais alunos da equipe fazem cada uma, com o status de cada aluno.
+Site da nossa equipe na gincana escolar. Mostra as provas que a escola passou e quem da equipe faz cada uma.
 
 **Site:** https://schackschuck.github.io/gincana-ulbra/
 
@@ -8,31 +8,19 @@ Site da nossa equipe na gincana escolar. Mostra as provas que a escola passou, s
 
 Abra o site. Há duas abas:
 
-- **Provas por categoria:** um card por prova, com descrição, prazo, barra de progresso e a lista de alunos com o status de cada um.
-- **Por aluno:** uma tabela com cada aluno e as provas dele.
+- **Provas:** um card por prova, com o nome, a descrição e o prazo (quando houver) e a lista de quem faz a prova.
+- **Por aluno:** uma tabela com cada pessoa e as provas dela. Nomes iguais em provas diferentes aparecem numa linha só (maiúsculas, minúsculas e espaços extras não importam).
 
-Dá para buscar por nome de prova ou de aluno e filtrar por categoria e por status.
-
-### Status
-
-| Status | Significado |
-| --- | --- |
-| Pendente | Ainda não começou |
-| Em andamento | Está sendo feita |
-| Cumprida | Feita, mas ainda não entregue |
-| Enviada | Entregue |
-
-A barra de progresso conta como concluídos os alunos com status **Cumprida** ou **Enviada**. O site só mostra o status; a entrega das provas acontece por fora.
+A busca encontra provas pelo nome da prova, pela descrição ou pelo nome de uma pessoa.
 
 ## Para o organizador
 
 1. Clique em **Modo organizador**, no topo (ou abra o site com `?admin` no fim do endereço).
 2. No painel você pode:
    - mudar o nome da gincana;
-   - cadastrar e remover categorias;
-   - colar a lista de alunos (um nome por linha) e remover alunos;
-   - criar, editar e excluir provas, marcando os alunos que fazem cada uma;
-   - trocar o status de cada aluno direto no card da prova.
+   - criar, editar e excluir provas (nome obrigatório; descrição e prazo opcionais);
+   - em cada prova, digitar o nome de qualquer pessoa e apertar Enter (ou "Adicionar"). Dá para colar vários nomes de uma vez, separados por vírgula ou um por linha. O × tira a pessoa da prova;
+   - opcionalmente, colar uma lista de alunos (um nome por linha) em **Alunos (sugestões)**. Esses nomes, e os que já foram usados em outras provas, aparecem como sugestão enquanto você digita. Remover um nome das sugestões não tira a pessoa das provas.
 3. As alterações ficam salvas **só no seu navegador**, como rascunho, até você publicar.
 4. Clique em **Publicar**. O site grava o `data.json` no repositório e atualiza para todos em cerca de 1 minuto.
 
@@ -62,22 +50,20 @@ Formato do `data.json`:
 {
   "titulo": "Gincana Escolar",
   "atualizado": "2026-11-19T12:00:00.000Z",
-  "alunos": [{ "id": "a1", "nome": "Nome do aluno" }],
-  "categorias": [{ "id": "c1", "nome": "Provas culturais" }],
+  "alunos": [{ "id": "a1", "nome": "Nome sugerido" }],
   "provas": [
     {
       "id": "p1",
       "nome": "Nome da prova",
-      "categoriaId": "c1",
       "descricao": "Regras da prova",
       "prazo": "2026-12-01",
-      "atribuicoes": [{ "alunoId": "a1", "status": "pendente" }]
+      "pessoas": ["Fulano", "Ciclana"]
     }
   ]
 }
 ```
 
-`status` pode ser `pendente`, `andamento`, `cumprida` ou `enviada`.
+`alunos` é só a lista de sugestões; quem faz cada prova fica em `pessoas`, como texto. `descricao` e `prazo` podem ficar vazios (`""`).
 
 ### Testar localmente
 

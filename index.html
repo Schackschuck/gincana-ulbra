@@ -8,7 +8,6 @@
   :root{
     --bg:#f6f7fb; --card:#fff; --ink:#1c2030; --muted:#6b7085; --line:#e3e6ef;
     --accent:#4f46e5; --accent-soft:#eef0ff;
-    --pend:#9ca3af; --and:#d97706; --cump:#2563eb; --env:#16a34a;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
@@ -33,18 +32,11 @@
   textarea{width:100%;min-height:60px}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
-  .cat-h{margin:22px 0 10px;font-size:1.1rem;display:flex;align-items:center;gap:8px}
-  .cat-h .n{font-size:.8rem;color:var(--muted);font-weight:400}
   .prova-nome{font-weight:600;font-size:1.02rem}
   .desc{color:var(--muted);font-size:.9rem;margin:4px 0 8px;white-space:pre-wrap}
   .meta{font-size:.8rem;color:var(--muted)}
-  .prog{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0}
-  .prog i{display:block;height:100%;background:var(--env)}
-  ul.at{list-style:none;padding:0;margin:6px 0 0}
-  ul.at li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-top:1px dashed var(--line);font-size:.92rem}
-  .chip{font-size:.75rem;padding:2px 8px;border-radius:99px;color:#fff;white-space:nowrap}
-  .s-pendente{background:var(--pend)} .s-andamento{background:var(--and)} .s-cumprida{background:var(--cump)} .s-enviada{background:var(--env)}
-  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  ul.at{list-style:none;padding:0;margin:8px 0 0}
+  ul.at li{padding:5px 0;border-top:1px dashed var(--line);font-size:.92rem}
   .empty{color:var(--muted);text-align:center;padding:30px}
   .admin-panel{background:var(--accent-soft);border:1px solid #d6d9ff;border-radius:12px;padding:14px;margin-bottom:14px}
   .admin-panel h3{margin:0 0 8px;font-size:1rem}
@@ -54,15 +46,12 @@
   .pill-list{display:flex;flex-wrap:wrap;gap:6px}
   .pill{background:#fff;border:1px solid var(--line);border-radius:99px;padding:3px 6px 3px 10px;font-size:.85rem;display:flex;align-items:center;gap:6px}
   .pill button{border:0;background:transparent;cursor:pointer;color:#b91c1c;font-size:1rem;line-height:1}
-  .checks{display:flex;flex-wrap:wrap;gap:6px 14px;max-height:160px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px}
-  .checks label{font-size:.88rem;display:flex;align-items:center;gap:5px}
+  .pessoas{min-height:42px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:6px}
   .warn{background:#fff7e6;border:1px solid #f5d28a;color:#7a5200;padding:8px 12px;border-radius:8px;font-size:.88rem;margin-bottom:12px}
-  .ok{background:#e9f9ee;border-color:#9fdcb2;color:#155f30}
   dialog{border:0;border-radius:14px;padding:18px;max-width:560px;width:94vw}
   dialog::backdrop{background:rgba(0,0,0,.4)}
-  .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);margin-bottom:6px}
   table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);font-size:.92rem}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);font-size:.92rem;vertical-align:top}
   th{background:#fafbff;color:var(--muted);font-weight:600}
   footer{color:var(--muted);font-size:.8rem;text-align:center;padding:30px 0}
 </style>
@@ -83,26 +72,12 @@
   <div id="admin" hidden></div>
 
   <nav class="tabs">
-    <button data-tab="provas" class="on">Provas por categoria</button>
+    <button data-tab="provas" class="on">Provas</button>
     <button data-tab="alunos">Por aluno</button>
   </nav>
 
   <div class="bar">
-    <input id="busca" placeholder="Buscar prova ou aluno…" style="flex:1 1 220px">
-    <select id="fCat"><option value="">Todas as categorias</option></select>
-    <select id="fStatus">
-      <option value="">Todos os status</option>
-      <option value="pendente">Pendente</option>
-      <option value="andamento">Em andamento</option>
-      <option value="cumprida">Cumprida</option>
-      <option value="enviada">Enviada</option>
-    </select>
-  </div>
-  <div class="legend">
-    <span><span class="dot" style="background:var(--pend)"></span>Pendente</span>
-    <span><span class="dot" style="background:var(--and)"></span>Em andamento</span>
-    <span><span class="dot" style="background:var(--cump)"></span>Cumprida</span>
-    <span><span class="dot" style="background:var(--env)"></span>Enviada</span>
+    <input id="busca" placeholder="Buscar prova ou pessoa…" style="flex:1 1 220px">
   </div>
 
   <section id="view"></section>
@@ -112,7 +87,6 @@
 <dialog id="dlg"></dialog>
 
 <script>
-const STATUS = {pendente:"Pendente", andamento:"Em andamento", cumprida:"Cumprida", enviada:"Enviada"};
 const LS_DRAFT = "gincana_rascunho", LS_CFG = "gincana_github";
 let D = null, publicado = null, admin = false, tab = "provas";
 
@@ -123,26 +97,52 @@ const lsGet = k => { try { return localStorage.getItem(k); } catch(e) { return n
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} };
 const lsDel = k => { try { localStorage.removeItem(k); } catch(e) {} };
 
-const aluno = id => D.alunos.find(a => a.id === id);
-const categoria = id => D.categorias.find(c => c.id === id);
 const fmtData = s => s ? new Date(s + "T12:00").toLocaleDateString("pt-BR") : "";
+const limpaNome = s => String(s || "").replace(/\s+/g, " ").trim();
+const chaveNome = s => limpaNome(s).toLowerCase();
+
+/* Garante o formato atual: provas com "pessoas" (lista de nomes), sem categorias.
+   Converte dados antigos (atribuicoes/categorias) se existirem, por exemplo num rascunho salvo. */
+function normaliza(d){
+  d = d && typeof d === "object" ? d : {};
+  const alunos = Array.isArray(d.alunos) ? d.alunos.filter(a => a && limpaNome(a.nome)) : [];
+  const nomePorId = Object.fromEntries(alunos.map(a => [a.id, a.nome]));
+  const provas = (Array.isArray(d.provas) ? d.provas : []).map(p => {
+    const brutos = Array.isArray(p.pessoas) ? p.pessoas
+      : (p.atribuicoes || []).map(a => nomePorId[a.alunoId]);
+    const vistos = new Set(), pessoas = [];
+    for (const n of brutos.map(limpaNome)) if (n && !vistos.has(n.toLowerCase())) { vistos.add(n.toLowerCase()); pessoas.push(n); }
+    return {id: p.id || uid("p"), nome: limpaNome(p.nome), descricao: p.descricao || "", prazo: p.prazo || "", pessoas};
+  });
+  return {titulo: d.titulo || "Gincana Escolar", atualizado: d.atualizado || "", alunos, provas};
+}
 
 async function carregar(){
   try {
     const r = await fetch("data.json?t=" + Date.now(), {cache:"no-store"});
     publicado = await r.json();
   } catch(e) {
-    publicado = {titulo:"Gincana Escolar", alunos:[], categorias:[], provas:[]};
+    publicado = {};
   }
-  for (const k of ["alunos","categorias","provas"]) publicado[k] ||= [];
+  publicado = normaliza(publicado);
   D = structuredClone(publicado);
   admin = new URLSearchParams(location.search).has("admin") || lsGet("gincana_admin") === "1";
-  if (admin) { const r = lsGet(LS_DRAFT); if (r) { try { D = JSON.parse(r); } catch(e){} } }
+  if (admin) carregarRascunho();
   render();
 }
 
+function carregarRascunho(){ const r = lsGet(LS_DRAFT); if (r) { try { D = normaliza(JSON.parse(r)); } catch(e){} } }
 function salvarRascunho(){ lsSet(LS_DRAFT, JSON.stringify(D)); render(); }
 function temRascunho(){ return JSON.stringify(D) !== JSON.stringify(publicado); }
+
+/* Nomes para o autocompletar: cadastro + nomes já usados em provas */
+function nomesConhecidos(){
+  const m = new Map();
+  for (const n of [...D.alunos.map(a => a.nome), ...D.provas.flatMap(p => p.pessoas)]) {
+    const k = chaveNome(n); if (k && !m.has(k)) m.set(k, limpaNome(n));
+  }
+  return [...m.values()].sort((a, b) => a.localeCompare(b, "pt-BR"));
+}
 
 /* ---------------- Visualização ---------------- */
 function render(){
@@ -150,10 +150,6 @@ function render(){
   $("#titulo").textContent = D.titulo || "Gincana Escolar";
   $("#atualizado").textContent = D.atualizado ? "Atualizado em " + new Date(D.atualizado).toLocaleString("pt-BR") : "Lista de provas e responsáveis";
   $("#btnAdmin").textContent = admin ? "Sair do modo organizador" : "Modo organizador";
-
-  const fc = $("#fCat"), atual = fc.value;
-  fc.innerHTML = '<option value="">Todas as categorias</option>' + D.categorias.map(c => `<option value="${c.id}">${esc(c.nome)}</option>`).join("");
-  fc.value = atual;
 
   $("#aviso").innerHTML = admin && temRascunho()
     ? `<div class="warn">Você tem alterações <b>não publicadas</b>. Os outros ainda veem a versão antiga. Clique em <b>Publicar</b> no painel abaixo.</div>` : "";
@@ -164,83 +160,55 @@ function render(){
   renderView();
 }
 
-/* Só a lista de provas/alunos: usado pela busca, filtros e abas, para não redesenhar o painel do organizador */
+/* Só a lista de provas/alunos: usado pela busca e pelas abas, para não redesenhar o painel do organizador */
 function renderView(){
   document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
   ({provas:viewProvas, alunos:viewAlunos})[tab]();
 }
 
-function filtros(){
-  return {q: $("#busca").value.trim().toLowerCase(), cat: $("#fCat").value, st: $("#fStatus").value};
-}
-
-function provaPassa(p, f){
-  if (f.cat && p.categoriaId !== f.cat) return false;
-  if (f.st && !p.atribuicoes.some(a => a.status === f.st)) return false;
-  if (f.q){
-    const txt = (p.nome + " " + (p.descricao||"") + " " + p.atribuicoes.map(a => aluno(a.alunoId)?.nome || "").join(" ")).toLowerCase();
-    if (!txt.includes(f.q)) return false;
-  }
-  return true;
-}
-
-function chip(st){ return `<span class="chip s-${st}">${STATUS[st] || st}</span>`; }
+const busca = () => $("#busca").value.trim().toLowerCase();
 
 function cardProva(p){
-  const tot = p.atribuicoes.length, feitos = p.atribuicoes.filter(a => a.status === "cumprida" || a.status === "enviada").length;
-  const pct = tot ? Math.round(feitos / tot * 100) : 0;
-  const lis = p.atribuicoes.map(a => {
-    const al = aluno(a.alunoId); if (!al) return "";
-    const ctrl = admin
-      ? `<select data-st="${p.id}|${a.alunoId}">${Object.entries(STATUS).map(([k,v]) => `<option value="${k}" ${k===a.status?"selected":""}>${v}</option>`).join("")}</select>`
-      : chip(a.status);
-    return `<li><span>${esc(al.nome)}</span>${ctrl}</li>`;
-  }).join("");
+  const n = p.pessoas.length;
   return `<div class="card">
     <div style="display:flex;justify-content:space-between;gap:8px">
       <div class="prova-nome">${esc(p.nome)}</div>
       ${admin ? `<div style="white-space:nowrap"><button class="btn sm" data-edit="${p.id}">Editar</button></div>` : ""}
     </div>
     ${p.descricao ? `<div class="desc">${esc(p.descricao)}</div>` : ""}
-    <div class="meta">${p.prazo ? "Prazo: " + fmtData(p.prazo) + " · " : ""}${feitos}/${tot} concluídas</div>
-    <div class="prog"><i style="width:${pct}%"></i></div>
-    ${tot ? `<ul class="at">${lis}</ul>` : `<div class="meta">Nenhum aluno atribuído ainda.</div>`}
+    <div class="meta">${p.prazo ? "Prazo: " + fmtData(p.prazo) + " · " : ""}${n} pessoa${n === 1 ? "" : "s"}</div>
+    ${n ? `<ul class="at">${p.pessoas.map(nome => `<li>${esc(nome)}</li>`).join("")}</ul>` : `<div class="meta" style="margin-top:6px">Ninguém nesta prova ainda.</div>`}
   </div>`;
 }
 
 function viewProvas(){
-  const f = filtros();
-  const cats = [...D.categorias, {id:"", nome:"Sem categoria"}];
-  let html = "";
-  for (const c of cats){
-    const ps = D.provas.filter(p => (p.categoriaId || "") === c.id && (c.id || !categoria(p.categoriaId)) && provaPassa(p, f));
-    if (!ps.length) continue;
-    html += `<h2 class="cat-h">${esc(c.nome)} <span class="n">${ps.length} prova${ps.length>1?"s":""}</span></h2><div class="grid">${ps.map(cardProva).join("")}</div>`;
-  }
-  $("#view").innerHTML = html || `<div class="empty">Nenhuma prova encontrada.</div>`;
+  const q = busca();
+  const ps = D.provas.filter(p => !q || (p.nome + " " + p.descricao + " " + p.pessoas.join(" ")).toLowerCase().includes(q));
+  $("#view").innerHTML = ps.length
+    ? `<div class="grid">${ps.map(cardProva).join("")}</div>`
+    : `<div class="empty">${D.provas.length ? "Nenhuma prova encontrada." : "Nenhuma prova cadastrada ainda."}</div>`;
 }
 
 function viewAlunos(){
-  const f = filtros();
-  const linhas = [];
-  for (const al of [...D.alunos].sort((a,b) => a.nome.localeCompare(b.nome))){
-    const itens = D.provas.flatMap(p => p.atribuicoes.filter(a => a.alunoId === al.id).map(a => ({p, a})))
-      .filter(({p, a}) => (!f.cat || p.categoriaId === f.cat) && (!f.st || a.status === f.st));
-    const txt = (al.nome + " " + itens.map(i => i.p.nome).join(" ")).toLowerCase();
-    if (f.q && !txt.includes(f.q)) continue;
-    if ((f.cat || f.st) && !itens.length) continue;
-    linhas.push(`<tr>
-      <td><b>${esc(al.nome)}</b></td>
-      <td>${itens.length ? itens.map(({p,a}) => `<div style="margin:3px 0">${chip(a.status)} ${esc(p.nome)} <span class="meta">${esc(categoria(p.categoriaId)?.nome || "")}</span></div>`).join("") : `<span class="meta">Sem provas</span>`}</td>
+  const q = busca();
+  const grupos = new Map();   // chave do nome -> {nome, provas:[]}
+  const grupo = n => { const k = chaveNome(n); if (!grupos.has(k)) grupos.set(k, {nome: limpaNome(n), provas: []}); return grupos.get(k); };
+  D.alunos.forEach(a => grupo(a.nome));
+  D.provas.forEach(p => p.pessoas.forEach(n => grupo(n).provas.push(p)));
+  const linhas = [...grupos.values()]
+    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))
+    .filter(g => !q || (g.nome + " " + g.provas.map(p => p.nome).join(" ")).toLowerCase().includes(q))
+    .map(g => `<tr>
+      <td><b>${esc(g.nome)}</b></td>
+      <td>${g.provas.length ? g.provas.map(p => `<div style="margin:3px 0">${esc(p.nome)}${p.prazo ? ` <span class="meta">· prazo ${fmtData(p.prazo)}</span>` : ""}</div>`).join("") : `<span class="meta">Sem provas</span>`}</td>
     </tr>`);
-  }
   $("#view").innerHTML = linhas.length
     ? `<table><thead><tr><th style="width:30%">Aluno</th><th>Provas</th></tr></thead><tbody>${linhas.join("")}</tbody></table>`
     : `<div class="empty">Nenhum aluno encontrado.</div>`;
 }
 
 /* ---------------- Modo organizador ---------------- */
-const CAMPOS_PAINEL = ["aCat","aAlunos","gOwner","gRepo","gToken"];
+const CAMPOS_PAINEL = ["aAlunos","gOwner","gRepo","gToken"];
 function renderAdmin(){
   const cfg = JSON.parse(lsGet(LS_CFG) || "{}");
   const digitado = {};
@@ -255,14 +223,10 @@ function renderAdmin(){
       <button class="btn pri" id="aNovaProva">+ Nova prova</button>
     </div>
 
-    <div class="row"><b style="flex:0 0 auto">Categorias:</b>
-      <input id="aCat" placeholder="Nova categoria (ex.: Provas culturais)"><button class="btn" id="aAddCat">Adicionar</button></div>
-    <div class="pill-list" style="margin-bottom:12px">${D.categorias.map(c => `<span class="pill">${esc(c.nome)}<button title="Remover" data-delcat="${c.id}">×</button></span>`).join("") || '<span class="meta">Nenhuma</span>'}</div>
-
-    <div class="row"><b style="flex:0 0 auto">Alunos:</b>
-      <textarea id="aAlunos" placeholder="Um nome por linha (pode colar uma lista)" style="min-height:38px"></textarea>
+    <div class="row"><b style="flex:0 0 auto">Alunos (sugestões):</b>
+      <textarea id="aAlunos" placeholder="Um nome por linha (opcional)" title="Esses nomes aparecem como sugestão ao montar as provas." style="min-height:38px"></textarea>
       <button class="btn" id="aAddAl">Adicionar</button></div>
-    <div class="pill-list" style="margin-bottom:12px">${D.alunos.map(a => `<span class="pill">${esc(a.nome)}<button title="Remover" data-delal="${a.id}">×</button></span>`).join("") || '<span class="meta">Nenhum</span>'}</div>
+    <div class="pill-list" style="margin-bottom:12px">${D.alunos.map(a => `<span class="pill">${esc(a.nome)}<button title="Remover das sugestões" data-delal="${a.id}">×</button></span>`).join("") || '<span class="meta">Nenhum. Você também pode digitar qualquer nome direto na prova.</span>'}</div>
 
     <details ${cfg.token ? "" : "open"} style="margin-top:6px">
       <summary><b>Publicar para todos</b> ${cfg.token ? '<span class="meta">(GitHub configurado)</span>' : ""}</summary>
@@ -292,31 +256,54 @@ function guessRepo(){
 }
 
 function dlgProva(id){
-  const p = id ? D.provas.find(x => x.id === id) : {id:"", nome:"", categoriaId:D.categorias[0]?.id || "", descricao:"", prazo:"", atribuicoes:[]};
-  const sel = new Set(p.atribuicoes.map(a => a.alunoId));
+  const p = id ? D.provas.find(x => x.id === id) : {id:"", nome:"", descricao:"", prazo:"", pessoas:[]};
+  const pessoas = [...p.pessoas];
   const d = $("#dlg");
   d.innerHTML = `<h3 style="margin-top:0">${id ? "Editar prova" : "Nova prova"}</h3>
     <div class="row"><input id="pNome" placeholder="Nome da prova" value="${esc(p.nome)}"></div>
-    <div class="row"><select id="pCat"><option value="">Sem categoria</option>${D.categorias.map(c => `<option value="${c.id}" ${c.id===p.categoriaId?"selected":""}>${esc(c.nome)}</option>`).join("")}</select>
-      <input id="pPrazo" type="date" value="${esc(p.prazo)}" title="Prazo (opcional)"></div>
+    <div class="row"><input id="pPrazo" type="date" value="${esc(p.prazo)}" title="Prazo (opcional)" style="flex:0 1 200px"><span class="meta">Prazo (opcional)</span></div>
     <div class="row"><textarea id="pDesc" placeholder="Descrição / regras (opcional)">${esc(p.descricao)}</textarea></div>
-    <div class="meta" style="margin-bottom:4px">Alunos que vão fazer esta prova:</div>
-    <input id="pFiltro" placeholder="Filtrar alunos…" style="width:100%;margin-bottom:6px">
-    <div class="checks" id="pChecks">${D.alunos.map(a => `<label data-n="${esc(a.nome.toLowerCase())}"><input type="checkbox" value="${a.id}" ${sel.has(a.id)?"checked":""}>${esc(a.nome)}</label>`).join("") || '<span class="meta">Cadastre alunos primeiro.</span>'}</div>
+    <div class="meta" style="margin-bottom:4px">Quem vai fazer esta prova (digite qualquer nome e aperte Enter):</div>
+    <div class="row" style="margin-bottom:0">
+      <input id="pPessoa" list="pSugestoes" placeholder="Nome da pessoa" autocomplete="off">
+      <button class="btn" id="pAddPessoa">Adicionar</button>
+    </div>
+    <datalist id="pSugestoes"></datalist>
+    <div class="pessoas pill-list" id="pPessoas"></div>
     <div class="row" style="margin-top:14px;justify-content:space-between">
       ${id ? `<button class="btn dan" id="pDel">Excluir prova</button>` : "<span></span>"}
       <span style="display:flex;gap:8px;flex:0 0 auto"><button class="btn" id="pCancel">Cancelar</button><button class="btn pri" id="pOk">Salvar</button></span>
     </div>`;
+
+  const desenhaPessoas = () => {
+    $("#pPessoas").innerHTML = pessoas.map((n, i) => `<span class="pill">${esc(n)}<button type="button" title="Tirar da prova" data-rmp="${i}">×</button></span>`).join("")
+      || '<span class="meta">Ninguém ainda.</span>';
+    const ja = new Set(pessoas.map(chaveNome));
+    $("#pSugestoes").innerHTML = nomesConhecidos().filter(n => !ja.has(chaveNome(n))).map(n => `<option value="${esc(n)}">`).join("");
+  };
+  // Aceita um nome ou vários separados por vírgula, ponto e vírgula ou quebra de linha
+  const adicionaDigitado = () => {
+    const inp = $("#pPessoa");
+    for (const n of inp.value.split(/[,;\n]/).map(limpaNome).filter(Boolean))
+      if (!pessoas.some(x => chaveNome(x) === chaveNome(n))) pessoas.push(n);
+    inp.value = ""; desenhaPessoas();
+  };
+  desenhaPessoas();
   d.showModal();
-  $("#pFiltro").oninput = e => { const q = e.target.value.toLowerCase(); d.querySelectorAll("#pChecks label").forEach(l => l.hidden = !l.dataset.n.includes(q)); };
+
+  $("#pPessoa").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); adicionaDigitado(); } };
+  $("#pPessoa").onpaste = e => {
+    const txt = (e.clipboardData || window.clipboardData)?.getData("text") || "";
+    if (/[\n,;]/.test(txt)) { e.preventDefault(); $("#pPessoa").value = txt; adicionaDigitado(); }
+  };
+  $("#pAddPessoa").onclick = () => { adicionaDigitado(); $("#pPessoa").focus(); };
+  $("#pPessoas").onclick = e => { const i = e.target.dataset?.rmp; if (i !== undefined) { pessoas.splice(+i, 1); desenhaPessoas(); } };
   $("#pCancel").onclick = () => d.close();
   if (id) $("#pDel").onclick = () => { if (confirm("Excluir esta prova?")) { D.provas = D.provas.filter(x => x.id !== id); d.close(); salvarRascunho(); } };
   $("#pOk").onclick = () => {
-    const nome = $("#pNome").value.trim(); if (!nome) { $("#pNome").focus(); return; }
-    const marcados = [...d.querySelectorAll("#pChecks input:checked")].map(i => i.value);
-    const antigos = Object.fromEntries(p.atribuicoes.map(a => [a.alunoId, a.status]));
-    const novo = {id: p.id || uid("p"), nome, categoriaId: $("#pCat").value, descricao: $("#pDesc").value.trim(), prazo: $("#pPrazo").value,
-      atribuicoes: marcados.map(aid => ({alunoId: aid, status: antigos[aid] || "pendente"}))};
+    const nome = limpaNome($("#pNome").value); if (!nome) { $("#pNome").focus(); return; }
+    adicionaDigitado(); // não perde um nome digitado sem apertar Enter
+    const novo = {id: p.id || uid("p"), nome, descricao: $("#pDesc").value.trim(), prazo: $("#pPrazo").value, pessoas: [...pessoas]};
     if (id) D.provas[D.provas.findIndex(x => x.id === id)] = novo; else D.provas.push(novo);
     d.close(); salvarRascunho();
   };
@@ -325,7 +312,7 @@ function dlgProva(id){
 async function publicar(){
   const owner = $("#gOwner").value.trim(), repo = $("#gRepo").value.trim(), token = $("#gToken").value.trim();
   const msg = $("#gMsg");
-  if (!owner || !repo || !token) { msg.textContent = "Preencha usuário, repositório e token."; $("details").open = true; return; }
+  if (!owner || !repo || !token) { msg.textContent = "Preencha usuário, repositório e token."; $("#admin details").open = true; return; }
   lsSet(LS_CFG, JSON.stringify({owner, repo, token}));
   msg.textContent = "Publicando…";
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/data.json`;
@@ -355,24 +342,24 @@ document.addEventListener("click", e => {
   if (t.closest("nav.tabs button")) { tab = t.closest("button").dataset.tab; renderView(); return; }
   if (t.id === "btnAdmin") {
     admin = !admin; lsSet("gincana_admin", admin ? "1" : "0");
-    if (admin) { const r = lsGet(LS_DRAFT); if (r) try { D = JSON.parse(r); } catch(_){} } else D = structuredClone(publicado);
+    if (admin) carregarRascunho(); else D = structuredClone(publicado);
     render(); return;
   }
   if (!admin) return;
   if (t.dataset.edit) return dlgProva(t.dataset.edit);
   if (t.id === "aNovaProva") return dlgProva(null);
   if (t.id === "aSalvaTit") { D.titulo = $("#aTitulo").value.trim() || "Gincana Escolar"; return salvarRascunho(); }
-  if (t.id === "aAddCat") { const n = $("#aCat").value.trim(); if (n) { D.categorias.push({id: uid("c"), nome: n}); $("#aCat").value = ""; salvarRascunho(); } return; }
   if (t.id === "aAddAl") {
-    $("#aAlunos").value.split(/\n/).map(s => s.trim()).filter(Boolean).forEach(n => D.alunos.push({id: uid("a"), nome: n}));
+    const ja = new Set(D.alunos.map(a => chaveNome(a.nome)));
+    $("#aAlunos").value.split(/\n/).map(limpaNome).filter(Boolean).forEach(n => {
+      if (!ja.has(chaveNome(n))) { ja.add(chaveNome(n)); D.alunos.push({id: uid("a"), nome: n}); }
+    });
     $("#aAlunos").value = "";
     return salvarRascunho();
   }
-  if (t.dataset.delcat) { if (confirm("Remover categoria? As provas dela ficam em \"Sem categoria\".")) { D.categorias = D.categorias.filter(c => c.id !== t.dataset.delcat); salvarRascunho(); } return; }
   if (t.dataset.delal) {
-    if (confirm("Remover aluno? Ele sai de todas as provas.")) {
+    if (confirm("Remover este nome das sugestões? As provas em que ele já está não mudam.")) {
       D.alunos = D.alunos.filter(a => a.id !== t.dataset.delal);
-      D.provas.forEach(p => p.atribuicoes = p.atribuicoes.filter(a => a.alunoId !== t.dataset.delal));
       salvarRascunho();
     }
     return;
@@ -381,13 +368,7 @@ document.addEventListener("click", e => {
   if (t.id === "gBaixar") return baixar();
   if (t.id === "gDesc") { if (confirm("Descartar tudo que não foi publicado?")) { D = structuredClone(publicado); lsDel(LS_DRAFT); render(); } }
 });
-document.addEventListener("change", e => {
-  const s = e.target.dataset?.st; if (!s || !admin) return;
-  const [pid, aid] = s.split("|");
-  const at = D.provas.find(p => p.id === pid)?.atribuicoes.find(a => a.alunoId === aid);
-  if (at) { at.status = e.target.value; salvarRascunho(); }
-});
-["busca","fCat","fStatus"].forEach(id => $("#" + id).addEventListener("input", () => renderView()));
+$("#busca").addEventListener("input", () => renderView());
 
 carregar();
 </script>
