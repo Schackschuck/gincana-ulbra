@@ -1,6 +1,21 @@
 {
   "titulo": "Gincana Escolar",
-  "atualizado": "",
+  "atualizado": "2026-11-19T23:15:50.778Z",
   "alunos": [],
-  "provas": []
+  "provas": [
+    {
+      "id": "p63kfxu",
+      "nome": "teste",
+      "descricao": "123",
+      "prazo": "12323-02-12",
+      "pessoas": [
+        "213"
+      ],
+      "postGincana": "",
+      "nossoPost": "",
+      "enviada": false,
+      "postada": false
+    }
+  ],
+  "ignorados": []
 }
