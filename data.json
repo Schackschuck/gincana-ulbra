@@ -1,6 +1,6 @@
 {
   "titulo": "Gincana Escolar",
-  "atualizado": "2026-11-20T02:42:31.930Z",
+  "atualizado": "2026-11-20T03:36:10.026Z",
   "alunos": [],
   "provas": [
     {
@@ -276,7 +276,9 @@
       "nome": "Caça às Baratas e Prova do Rango",
       "descricao": "PROVA: CAÇA ÀS BARATAS E PROVA DO RANGO\nPara: Alunos/ Ex-Alunos/ Pais Inscritos e Não Inscritos – Sociedade em Geral.\n\n1ª ETAPA – CAÇA ÀS BARATAS\nPara: Alunos/ Ex-Alunos/ Pais Inscritos e Não Inscritos\nCada equipe deverá coletar 10 baratas mortas e traze-las no colégio às 22h, no momento da realização da Prova do Rango.\nATENÇÃO! Não descartem as baratas após a entrega! Elas deverão ser levadas de volta pela equipe, pois serão utilizadas em outra prova da Gincana, mesmo já estando mortas.\nA responsabilidade pela coleta, transporte e conservação das baratas até o momento da próxima prova será exclusivamente da equipe.\n\n2ª ETAPA – PROVA DO RANGO\nPara: Alunos\nAquela prova que todos esperam: a prova da comida!\nREGRAS:\n• O participante deverá comer todo o alimento servido.\n• Quem terminar primeiro será o vencedor.\n• Não será permitido levantar o prato durante a prova.\n• Caso algum alimento caia para fora do recipiente, haverá desconto de pontos.\n• A pontuação e os descontos serão definidos pela organização.\n\nHORÁRIO: 22h, no colégio.\n\nProva Cumprida 700 pontos – trazer 10 baratas",
       "prazo": "2026-11-19",
-      "pessoas": [],
+      "pessoas": [
+        "Ricardo"
+      ],
       "postGincana": "https://www.instagram.com/p/Df8OgM_grx_/",
       "nossoPost": "",
       "enviada": true,
@@ -468,24 +470,6 @@
       "pontosItem": 0
     },
     {
-      "id": "p2at5in",
-      "nome": "Reproduzir um Quadro (6º ao 8º ano)",
-      "descricao": "PROVA Reproduzir um Quadro.\nPara: Alunos/ Ex-Alunos/ Pais Inscritos e Não Inscritos – Sociedade em Geral.\n\n1ª etapa: Cada equipe deverá escolher uma das obras da lista abaixo e reproduzi-la em uma folha tamanho A3. Também será permitido utilizar duas folhas A4 emendadas.\n2ª etapa: A reprodução deverá ser feita à mão, por meio de desenho. Não serão aceitas imagens impressas. As equipes poderão contar com a ajuda de pessoas que não estejam inscritas na Gincana.\n3ª etapa: O trabalho deverá ser entregue no colégio às 21h, juntamente com as demais provas previstas para esse horário.\nLista de obras aceitas:\n• O Grito;\n• A Criação de Adão;\n• O Filho do Homem;\n• American Gothic;\n• A Última Ceia;\n🕰 HORÁRIO DE TÉRMINO DA PROVA: 21h.\nProva Cumprida 700 pontos\nAvaliação dos Melhores Desenhos\n\n6º ao 8º ano\n1º Lugar: 700 Pontos\n2º Lugar: 500 Pontos\n3º Lugar: 400 Pontos\n4º Lugar: 300 Pontos\n5º Lugar: 200 Pontos\n6º Lugar: 100 Pontos",
-      "prazo": "2026-11-19",
-      "pessoas": [],
-      "postGincana": "https://www.instagram.com/p/Df8Ga2vA9Cg/",
-      "nossoPost": "",
-      "enviada": true,
-      "postar": false,
-      "postada": true,
-      "anulada": false,
-      "hora": "21:00",
-      "itens": [],
-      "colocacao": 0,
-      "pontos": 0,
-      "pontosItem": 0
-    },
-    {
       "id": "p7fs6lh",
       "nome": "Um Papo com a Barata!",
       "descricao": "PROVA – UM PAPO COM A BARATA!\nPara: Alunos\n\nA equipe deverá produzir um vídeo mostrando uma conversa entre o participante da Prova do Rango e uma ou mais baratas que estiveram presentes naquele momento.\nA ideia é entrevistar o participante sobre sua experiência durante a prova e, na sequência, dar voz à barata que estava acompanhando tudo de perto!\nVale vozes diferentes, entrevistas, efeitos especiais e muita criatividade para tornar essa conversa divertida e engraçada.\nPostagem: O vídeo deverá ser publicado no grupo da turma, marcando o perfil @gincanamartinholutero, até a 01h da madrugada.\nSoltem a imaginação! Queremos ouvir os dois lados dessa história: o de quem comeu e o de quem ficou só observando (a barata)!",
@@ -505,11 +489,11 @@
       "itens": [
         {
           "texto": "Gravar a entrevista com o participante da Prova do Rango",
-          "feito": false
+          "feito": true
         },
         {
           "texto": "Gravar a parte da barata (voz da barata)",
-          "feito": false
+          "feito": true
         },
         {
           "texto": "Publicar o vídeo marcando @gincanamartinholutero até 01h",
