@@ -150,7 +150,7 @@ function normaliza(d){
     for (const n of brutos.map(limpaNome)) if (n && !vistos.has(n.toLowerCase())) { vistos.add(n.toLowerCase()); pessoas.push(n); }
     return {id: p.id || uid("p"), nome: limpaNome(p.nome), descricao: p.descricao || "", prazo: p.prazo || "", pessoas,
       postGincana: p.postGincana || "", nossoPost: p.nossoPost || "", enviada: !!p.enviada,
-      postar: typeof p.postar === "boolean" ? p.postar : mandaPostar(p.descricao), postada: !!p.postada,
+      postar: typeof p.postar === "boolean" ? p.postar : mandaPostar(p.descricao), postada: !!p.postada, anulada: !!p.anulada,
       hora: /^\d{2}:\d{2}$/.test(p.hora || "") ? p.hora : "",
       itens: (Array.isArray(p.itens) ? p.itens : []).map(i => typeof i === "string" ? {texto: limpaNome(i), feito: false}
         : {texto: limpaNome(i && i.texto), feito: !!(i && i.feito)}).filter(i => i.texto),
@@ -176,7 +176,15 @@ async function carregar(){
   render();
 }
 
-function carregarRascunho(){ const r = lsGet(LS_DRAFT); if (r) { try { D = normaliza(JSON.parse(r)); } catch(e){} } }
+function carregarRascunho(){
+  const r = lsGet(LS_DRAFT); if (!r) return;
+  try {
+    const raw = JSON.parse(r), pub = Object.fromEntries(publicado.provas.map(p => [p.id, p]));
+    // Rascunho salvo por uma versão antiga do site: os campos que ele não tinha (itens, hora...) vêm da versão publicada
+    if (Array.isArray(raw.provas)) raw.provas = raw.provas.map(p => ({...(pub[p.id] || {}), ...p}));
+    D = normaliza(raw);
+  } catch(e){}
+}
 function salvarRascunho(){ lsSet(LS_DRAFT, JSON.stringify(D)); render(); }
 function temRascunho(){ return JSON.stringify(D) !== JSON.stringify(publicado); }
 
@@ -227,8 +235,8 @@ const fmtNum = n => (n || 0).toLocaleString("pt-BR");
 
 /* Prova feita = enviada, postada (se as regras mandam postar) e todos os itens marcados */
 const feita = p => p.enviada && (!p.postar || p.postada) && p.itens.every(i => i.feito);
-// Ordem da lista: primeiro as que faltam, pelo prazo/horário mais cedo (sem prazo vão para o fim); as feitas por último
-const chaveOrdem = p => (feita(p) ? "1" : "0") + (/^\d{4}-\d{2}-\d{2}$/.test(p.prazo) ? p.prazo : "9999-99-99") + (p.hora || "99:99");
+// Ordem da lista: primeiro as que faltam, pelo prazo/horário mais cedo (sem prazo vão para o fim); depois as feitas; as anuladas por último
+const chaveOrdem = p => (p.anulada ? "2" : feita(p) ? "1" : "0") + (/^\d{4}-\d{2}-\d{2}$/.test(p.prazo) ? p.prazo : "9999-99-99") + (p.hora || "99:99");
 
 /* Pontos sugeridos pela colocação, lidos das regras: "Prova cumprida 700 pontos" + "2º Lugar: 500 Pontos".
    null = as regras não têm tabela de colocação (aí os pontos são digitados à mão). */
@@ -249,7 +257,9 @@ function ctrlProva(p){
     ? `<div class="pts">Nossa colocação <select data-col="${p.id}">${[0,1,2,3,4,5,6].map(n => `<option value="${n}" ${p.colocacao === n ? "selected" : ""}>${n ? n + "º" : "—"}</option>`).join("")}</select>
        Pontos <input type="number" min="0" step="10" data-pts="${p.id}" value="${p.pontos || ""}" placeholder="0"></div>`
     : p.colocacao || p.pontos ? `<div class="pts">🏆 ${p.colocacao ? p.colocacao + "º lugar · " : ""}${fmtNum(p.pontos)} pontos</div>` : "";
-  return `${pts}<div class="ctrl">${item("enviada", "Enviada", "Falta enviar")}${p.postar ? item("postada", "Postada no Instagram", "Falta postar") : ""}</div>
+  const anu = admin ? `<label class="chip c-neutro"><input type="checkbox" data-tg="anulada|${p.id}" ${p.anulada ? "checked" : ""}>Anulada</label>` : "";
+  const ctrl = !admin && p.anulada ? "" : `<div class="ctrl">${item("enviada", "Enviada", "Falta enviar")}${p.postar ? item("postada", "Postada no Instagram", "Falta postar") : ""}${anu}</div>`;
+  return `${pts}${ctrl}
     ${lg || ln ? `<div class="links">${lg ? `<a href="${esc(lg)}" target="_blank" rel="noopener">Postagem da gincana ↗</a>` : ""}${ln ? `<a href="${esc(ln)}" target="_blank" rel="noopener">Nosso post ↗</a>` : ""}</div>` : ""}`;
 }
 
@@ -260,9 +270,9 @@ function cardProva(p){
     `<li class="${it.feito ? "ok" : ""}">${admin
       ? `<label><input type="checkbox" data-it="${p.id}|${i}" ${it.feito ? "checked" : ""}><span>${esc(it.texto)}</span></label>`
       : `${it.feito ? "✔" : "☐"} <span>${esc(it.texto)}</span>`}</li>`).join("")}</ul>` : "";
-  return `<div class="card${ok ? " feita" : ""}">
+  return `<div class="card${ok || p.anulada ? " feita" : ""}">
     <div style="display:flex;justify-content:space-between;gap:8px">
-      <div class="prova-nome">${esc(p.nome)}${ok ? ` <span class="chip c-ok">✔ Feita</span>` : ""}</div>
+      <div class="prova-nome">${p.anulada ? `<s>${esc(p.nome)}</s> <span class="chip c-neutro">⛔ Anulada</span>` : esc(p.nome) + (ok ? ` <span class="chip c-ok">✔ Feita</span>` : "")}</div>
       ${admin ? `<div style="white-space:nowrap"><button class="btn sm" data-edit="${p.id}">Editar</button></div>` : ""}
     </div>
     ${p.descricao ? `<div class="desc legenda" title="Clique para ver as regras completas">${esc(p.descricao)}</div>` : ""}
@@ -277,12 +287,13 @@ function viewProvas(){
   const q = busca(), fc = $("#fCtrl").value;
   const ps = D.provas.filter(p =>
     (!q || (p.nome + " " + p.descricao + " " + p.pessoas.join(" ") + " " + p.itens.map(i => i.texto).join(" ")).toLowerCase().includes(q)) &&
-    (fc !== "falta-enviar" || !p.enviada) && (fc !== "falta-postar" || (p.postar && !p.postada)) && (fc !== "completas" || feita(p)))
+    (fc !== "falta-enviar" || (!p.anulada && !p.enviada)) && (fc !== "falta-postar" || (!p.anulada && p.postar && !p.postada)) && (fc !== "completas" || (!p.anulada && feita(p))))
     .sort((a, b) => chaveOrdem(a).localeCompare(chaveOrdem(b)));
-  const tot = D.provas.length, postam = D.provas.filter(p => p.postar);
-  const pontuadas = D.provas.filter(p => p.pontos), total = pontuadas.reduce((s, p) => s + p.pontos, 0);
+  const validas = D.provas.filter(p => !p.anulada), anuladas = D.provas.length - validas.length;
+  const tot = validas.length, postam = validas.filter(p => p.postar);
+  const pontuadas = validas.filter(p => p.pontos), total = pontuadas.reduce((s, p) => s + p.pontos, 0);
   const placar = tot ? `<div class="total">🏆 Nossa pontuação: ${fmtNum(total)} pontos${pontuadas.length ? ` <span style="font-weight:400;opacity:.85">(em ${pontuadas.length} prova${pontuadas.length > 1 ? "s" : ""})</span>` : ""}</div>` : "";
-  const resumo = tot ? `<div class="meta" style="margin-bottom:10px">${tot} prova${tot > 1 ? "s" : ""} · feitas: ${D.provas.filter(feita).length}/${tot} · enviadas: ${D.provas.filter(p => p.enviada).length}/${tot}${postam.length ? ` · postadas no Instagram: ${postam.filter(p => p.postada).length}/${postam.length}` : ""}</div>` : "";
+  const resumo = tot ? `<div class="meta" style="margin-bottom:10px">${tot} prova${tot > 1 ? "s" : ""} · feitas: ${validas.filter(feita).length}/${tot} · enviadas: ${validas.filter(p => p.enviada).length}/${tot}${postam.length ? ` · postadas no Instagram: ${postam.filter(p => p.postada).length}/${postam.length}` : ""}${anuladas ? ` · anuladas: ${anuladas}` : ""}</div>` : "";
   $("#view").innerHTML = placar + resumo + (ps.length
     ? `<div class="grid">${ps.map(cardProva).join("")}</div>`
     : `<div class="empty">${tot ? "Nenhuma prova encontrada." : "Nenhuma prova cadastrada ainda."}</div>`);
@@ -332,7 +343,7 @@ function viewAlunos(){
     .filter(g => !q || (g.nome + " " + g.provas.map(p => p.nome).join(" ")).toLowerCase().includes(q))
     .map(g => `<tr>
       <td><b>${esc(g.nome)}</b></td>
-      <td>${g.provas.length ? g.provas.map(p => `<div style="margin:3px 0">${esc(p.nome)}${p.prazo ? ` <span class="meta">· prazo ${fmtData(p.prazo)}</span>` : ""}</div>`).join("") : `<span class="meta">Sem provas</span>`}</td>
+      <td>${g.provas.length ? g.provas.map(p => `<div style="margin:3px 0">${p.anulada ? `<s>${esc(p.nome)}</s> <span class="meta">· anulada</span>` : esc(p.nome)}${p.prazo ? ` <span class="meta">· prazo ${fmtData(p.prazo)}</span>` : ""}</div>`).join("") : `<span class="meta">Sem provas</span>`}</td>
     </tr>`);
   $("#view").innerHTML = linhas.length
     ? `<table><thead><tr><th style="width:30%">Aluno</th><th>Provas</th></tr></thead><tbody>${linhas.join("")}</tbody></table>`
@@ -396,7 +407,7 @@ function provaDaPostagem(post){
 }
 
 function dlgProva(id, base){
-  const vazio = {id:"", nome:"", descricao:"", prazo:"", pessoas:[], postGincana:"", nossoPost:"", enviada:false, postar:false, postada:false, hora:"", itens:[], colocacao:0, pontos:0};
+  const vazio = {id:"", nome:"", descricao:"", prazo:"", pessoas:[], postGincana:"", nossoPost:"", enviada:false, postar:false, postada:false, anulada:false, hora:"", itens:[], colocacao:0, pontos:0};
   const p = id ? D.provas.find(x => x.id === id) : {...vazio, ...(base || {})};
   const pessoas = [...p.pessoas];
   const d = $("#dlg");
@@ -418,6 +429,7 @@ function dlgProva(id, base){
       <label class="ck"><input type="checkbox" id="pEnv" ${p.enviada ? "checked" : ""}> Enviada</label>
       <label class="ck"><input type="checkbox" id="pMand" ${p.postar ? "checked" : ""}> A prova manda postar no Instagram</label>
       <label class="ck" id="pPosLbl" ${p.postar ? "" : "hidden"}><input type="checkbox" id="pPos" ${p.postada ? "checked" : ""}> Postada no Instagram</label>
+      <label class="ck"><input type="checkbox" id="pAnu" ${p.anulada ? "checked" : ""}> Prova anulada</label>
     </div>
     <div class="row"><input id="pNosso" placeholder="Link do nosso post no Instagram (opcional)" value="${esc(p.nossoPost)}"></div>
     <div class="row"><input id="pPostG" placeholder="Link da postagem da gincana com esta prova (opcional)" value="${esc(p.postGincana)}"></div>
@@ -457,7 +469,7 @@ function dlgProva(id, base){
     adicionaDigitado(); // não perde um nome digitado sem apertar Enter
     const novo = {id: p.id || uid("p"), nome, descricao: $("#pDesc").value.trim(), prazo: $("#pPrazo").value, pessoas: [...pessoas],
       postGincana: $("#pPostG").value.trim(), nossoPost: $("#pNosso").value.trim(), enviada: $("#pEnv").checked,
-      postar: $("#pMand").checked, postada: $("#pMand").checked && $("#pPos").checked, hora: $("#pHora").value,
+      postar: $("#pMand").checked, postada: $("#pMand").checked && $("#pPos").checked, anulada: $("#pAnu").checked, hora: $("#pHora").value,
       itens: $("#pItens").value.split("\n").map(limpaNome).filter(Boolean).map(t => ({texto: t, feito: p.itens.some(i => i.feito && i.texto === t)})),
       colocacao: p.colocacao || 0, pontos: p.pontos || 0};
     if (id) D.provas[D.provas.findIndex(x => x.id === id)] = novo; else D.provas.push(novo);
@@ -544,7 +556,7 @@ document.addEventListener("change", e => {
   const prova = id => D.provas.find(x => x.id === id);
   if (ds.tg) {
     const [campo, pid] = ds.tg.split("|"), p = prova(pid);
-    if (p && (campo === "enviada" || campo === "postada")) { p[campo] = e.target.checked; salvarRascunho(); }
+    if (p && ["enviada", "postada", "anulada"].includes(campo)) { p[campo] = e.target.checked; salvarRascunho(); }
   } else if (ds.it) {
     const [pid, i] = ds.it.split("|"), p = prova(pid);
     if (p && p.itens[+i]) { p.itens[+i].feito = e.target.checked; salvarRascunho(); }
