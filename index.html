@@ -76,6 +76,56 @@
   th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);font-size:.92rem;vertical-align:top}
   th{background:#fafbff;color:var(--muted);font-weight:600}
   footer{color:var(--muted);font-size:.8rem;text-align:center;padding:30px 0}
+  h1{letter-spacing:-.02em}
+
+  /* Kanban da aba Provas: as colunas saem do estado da prova (função coluna) */
+  .kanban{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:start}
+  .col{background:#eceef5;border-radius:14px;padding:0 8px 8px}
+  .col-h{position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:8px;padding:10px 4px 6px;font-weight:600;font-size:.88rem;
+    background:rgba(236,238,245,.82);backdrop-filter:blur(12px) saturate(180%);-webkit-backdrop-filter:blur(12px) saturate(180%);border-radius:14px 14px 0 0}
+  .col-h .n{margin-left:auto;color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+  .dot{width:9px;height:9px;border-radius:50%;background:#9aa0b4;flex:0 0 auto}
+  .col[data-c=andamento] .dot{background:#3b82f6} .col[data-c=postar] .dot{background:#f59e0b} .col[data-c=feitas] .dot{background:#22a55a}
+  .vazio{color:var(--muted);font-size:.85rem;text-align:center;padding:18px 0 10px}
+  .mini{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px;cursor:pointer;
+    box-shadow:0 1px 2px rgba(20,24,40,.05);transition:transform .1s ease-out,box-shadow .15s ease-out}
+  .mini:hover{box-shadow:0 4px 14px rgba(20,24,40,.09)}
+  .mini:active{transform:scale(.98)}
+  .mini:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .mini .nome{font-weight:600;font-size:.94rem;line-height:1.25;letter-spacing:-.005em}
+  .mini .meta{margin-top:4px}
+  .mini .ctrl{margin-top:8px}
+  .itbar{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .barra{flex:1;height:4px;border-radius:9px;background:var(--line);overflow:hidden}
+  .barra i{display:block;height:100%;background:var(--accent);border-radius:9px}
+  .anuladas{margin-top:16px} .anuladas summary{cursor:pointer;color:var(--muted);font-weight:600;font-size:.9rem}
+  .grid-mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0 12px}
+  @media (max-width:700px){
+    /* Celular: uma coluna por vez, deslizando para o lado */
+    .kanban{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:0 16px 6px;scroll-padding:0 16px}
+    .col{flex:0 0 85%;scroll-snap-align:start}
+    .col:has(.vazio){flex-basis:46%}
+    .col-h{white-space:nowrap}   /* coluna vazia fica estreita e já mostra a próxima */
+  }
+
+  /* Folha de detalhes: sobe de baixo e desce pelo mesmo caminho */
+  dialog.folha{padding:0;max-width:600px;width:94vw;max-height:85vh;overflow:auto;border-radius:16px;
+    transition:opacity .22s ease-out,transform .32s cubic-bezier(.2,.8,.2,1),overlay .32s allow-discrete,display .32s allow-discrete}
+  dialog.folha:not([open]){opacity:0;transform:translateY(28px)}
+  @starting-style{dialog.folha[open]{opacity:0;transform:translateY(28px)}}
+  dialog.folha::backdrop{background:rgba(0,0,0,.35)}
+  .folha-top{position:sticky;top:0;z-index:1;display:flex;justify-content:flex-end;padding:8px 10px 0;
+    background:linear-gradient(#fff 60%,rgba(255,255,255,0))}
+  .folha .card{border:0;opacity:1;padding-top:4px}
+  @media (max-width:700px){
+    dialog.folha{width:100%;max-width:100%;margin:auto 0 0;border-radius:16px 16px 0 0;max-height:88vh}
+    dialog.folha:not([open]){transform:translateY(100%)}
+    @starting-style{dialog.folha[open]{transform:translateY(100%)}}
+  }
+  @media (prefers-reduced-motion:reduce){
+    dialog.folha,dialog.folha:not([open]){transform:none !important;transition:opacity .2s,overlay .2s allow-discrete,display .2s allow-discrete}
+    .mini{transition:none}
+  }
 </style>
 </head>
 <body>
@@ -101,12 +151,6 @@
 
   <div class="bar">
     <input id="busca" placeholder="Buscar prova ou pessoa…" style="flex:1 1 220px">
-    <select id="fCtrl">
-      <option value="">Todas as provas</option>
-      <option value="falta-enviar">Falta enviar</option>
-      <option value="falta-postar">Falta postar no Instagram</option>
-      <option value="completas">Já feitas</option>
-    </select>
   </div>
 
   <section id="view"></section>
@@ -114,6 +158,7 @@
 <footer>Site da gincana · publicado no GitHub Pages</footer>
 
 <dialog id="dlg"></dialog>
+<dialog id="folha" class="folha" aria-label="Detalhes da prova"></dialog>
 
 <script>
 const LS_DRAFT = "gincana_rascunho", LS_CFG = "gincana_github";
@@ -241,13 +286,13 @@ function render(){
   $("#admin").hidden = !admin;
   if (admin) renderAdmin();
 
+  atualizaFolha();
   renderView();
 }
 
 /* Só a lista da aba atual: usado pela busca, filtro e abas, para não redesenhar o painel do organizador */
 function renderView(){
   document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
-  $("#fCtrl").hidden = tab !== "provas";
   $("#busca").placeholder = tab === "postagens" ? "Buscar na legenda das postagens…" : "Buscar prova ou pessoa…";
   ({provas:viewProvas, postagens:viewPostagens, alunos:viewAlunos})[tab]();
   marcaLegendasLongas();
@@ -260,6 +305,11 @@ const fmtNum = n => (n || 0).toLocaleString("pt-BR");
 const feita = p => p.enviada && (!p.postar || p.postada);
 // Ordem da lista: primeiro as que faltam, pelo prazo/horário mais cedo (sem prazo vão para o fim); depois as feitas; as anuladas por último
 const chaveOrdem = p => (p.anulada ? "2" : feita(p) ? "1" : "0") + (/^\d{4}-\d{2}-\d{2}$/.test(p.prazo) ? p.prazo : "9999-99-99") + (p.hora || "99:99");
+// Coluna do kanban, tirada do estado da prova (sem campo próprio): "Em andamento" = já tem gente escalada ou algum item marcado
+const coluna = p => p.anulada ? "anuladas" : feita(p) ? "feitas"
+  : p.enviada && p.postar ? "postar"
+  : p.pessoas.length || p.itens.some(i => i.feito) ? "andamento" : "fazer";
+const COLUNAS = [["fazer", "A fazer"], ["andamento", "Em andamento"], ["postar", "Falta postar"], ["feitas", "Feitas"]];
 
 /* Pontos sugeridos pela colocação, lidos das regras: "Prova cumprida 700 pontos" + "2º Lugar: 500 Pontos".
    null = as regras não têm tabela de colocação (aí os pontos são digitados à mão). */
@@ -271,10 +321,13 @@ function sugerePontos(p, col){
   return (c ? num(c[1] || c[2]) : 0) + tab[col];
 }
 
+// Caixinha (organizador) ou selo (público) de enviada/postada
+const chipCtrl = (p, campo, sim, nao) => admin
+  ? `<label class="chip ${p[campo] ? "c-ok" : "c-no"}"><input type="checkbox" data-tg="${campo}|${p.id}" ${p[campo] ? "checked" : ""}>${p[campo] ? sim : nao}</label>`
+  : `<span class="chip ${p[campo] ? "c-ok" : "c-no"}">${p[campo] ? "✔ " + sim : "✗ " + nao}</span>`;
+
 function ctrlProva(p){
-  const item = (campo, sim, nao) => admin
-    ? `<label class="chip ${p[campo] ? "c-ok" : "c-no"}"><input type="checkbox" data-tg="${campo}|${p.id}" ${p[campo] ? "checked" : ""}>${p[campo] ? sim : nao}</label>`
-    : `<span class="chip ${p[campo] ? "c-ok" : "c-no"}">${p[campo] ? "✔ " + sim : "✗ " + nao}</span>`;
+  const item = (campo, sim, nao) => chipCtrl(p, campo, sim, nao);
   const lg = urlSegura(p.postGincana), ln = urlSegura(p.nossoPost);
   const pts = admin
     ? p.pontosItem
@@ -308,20 +361,50 @@ function cardProva(p){
   </div>`;
 }
 
+/* Card compacto do quadro: tocar abre a folha com o card completo (cardProva) */
+function cardMini(p){
+  const fi = p.itens.filter(i => i.feito).length, n = p.pessoas.length;
+  const quando = [p.prazo ? fmtData(p.prazo).slice(0, 5) : "", p.hora].filter(Boolean).join(" · ");
+  const quem = n ? p.pessoas.slice(0, 2).join(", ") + (n > 2 ? ` +${n - 2}` : "") : "";
+  return `<div class="mini" role="button" tabindex="0" data-abre="${esc(p.id)}" style="view-transition-name:c-${esc(p.id)}">
+    <div class="nome">${p.anulada ? `<s>${esc(p.nome)}</s>` : esc(p.nome)}</div>
+    ${quando || quem ? `<div class="meta">${[quando && "⏰ " + quando, quem && "👥 " + esc(quem)].filter(Boolean).join(" · ")}</div>` : ""}
+    ${p.itens.length ? `<div class="itbar"><div class="barra"><i style="width:${Math.round(100 * fi / p.itens.length)}%"></i></div>${fi}/${p.itens.length}</div>` : ""}
+    ${p.pontos ? `<div class="meta">🏆 ${p.colocacao ? p.colocacao + "º · " : ""}${fmtNum(p.pontos)} pts</div>` : ""}
+    ${admin && !p.anulada ? `<div class="ctrl">${chipCtrl(p, "enviada", "Enviada", "Falta enviar")}${p.postar ? chipCtrl(p, "postada", "Postada", "Falta postar") : ""}</div>` : ""}
+  </div>`;
+}
+
 function viewProvas(){
-  const q = busca(), fc = $("#fCtrl").value;
+  const q = busca();
   const ps = D.provas.filter(p =>
-    (!q || (p.nome + " " + p.descricao + " " + p.pessoas.join(" ") + " " + p.itens.map(i => i.texto).join(" ")).toLowerCase().includes(q)) &&
-    (fc !== "falta-enviar" || (!p.anulada && !p.enviada)) && (fc !== "falta-postar" || (!p.anulada && p.postar && !p.postada)) && (fc !== "completas" || (!p.anulada && feita(p))))
+    !q || (p.nome + " " + p.descricao + " " + p.pessoas.join(" ") + " " + p.itens.map(i => i.texto).join(" ")).toLowerCase().includes(q))
     .sort((a, b) => chaveOrdem(a).localeCompare(chaveOrdem(b)));
-  const validas = D.provas.filter(p => !p.anulada), anuladas = D.provas.length - validas.length;
-  const tot = validas.length, postam = validas.filter(p => p.postar);
+  const validas = D.provas.filter(p => !p.anulada);
   const pontuadas = validas.filter(p => p.pontos), total = pontuadas.reduce((s, p) => s + p.pontos, 0);
-  const placar = tot ? `<div class="total">🏆 Nossa pontuação: ${fmtNum(total)} pontos${pontuadas.length ? ` <span style="font-weight:400;opacity:.85">(em ${pontuadas.length} prova${pontuadas.length > 1 ? "s" : ""})</span>` : ""}</div>` : "";
-  const resumo = tot ? `<div class="meta" style="margin-bottom:10px">${tot} prova${tot > 1 ? "s" : ""} · feitas: ${validas.filter(feita).length}/${tot} · enviadas: ${validas.filter(p => p.enviada).length}/${tot}${postam.length ? ` · postadas no Instagram: ${postam.filter(p => p.postada).length}/${postam.length}` : ""}${anuladas ? ` · anuladas: ${anuladas}` : ""}</div>` : "";
-  $("#view").innerHTML = placar + resumo + (ps.length
-    ? `<div class="grid">${ps.map(cardProva).join("")}</div>`
-    : `<div class="empty">${tot ? "Nenhuma prova encontrada." : "Nenhuma prova cadastrada ainda."}</div>`);
+  const placar = validas.length ? `<div class="total">🏆 Nossa pontuação: ${fmtNum(total)} pontos${pontuadas.length ? ` <span style="font-weight:400;opacity:.85">(em ${pontuadas.length} prova${pontuadas.length > 1 ? "s" : ""})</span>` : ""}</div>` : "";
+  const quadro = `<div class="kanban">${COLUNAS.map(([c, nome]) => {
+    const l = ps.filter(p => coluna(p) === c);
+    return `<section class="col" data-c="${c}"><div class="col-h"><span class="dot"></span>${nome}<span class="n">${l.length}</span></div>${l.map(cardMini).join("") || `<div class="vazio">Nada aqui</div>`}</section>`;
+  }).join("")}</div>`;
+  const anuladas = ps.filter(p => p.anulada), aberto = $("#view details.anuladas")?.open;
+  const anu = anuladas.length ? `<details class="anuladas" ${aberto ? "open" : ""}><summary>Anuladas (${anuladas.length})</summary><div class="grid-mini">${anuladas.map(cardMini).join("")}</div></details>` : "";
+  $("#view").innerHTML = placar + (!D.provas.length ? `<div class="empty">Nenhuma prova cadastrada ainda.</div>`
+    : ps.length ? quadro + anu : `<div class="empty">Nenhuma prova encontrada.</div>`);
+}
+
+/* Folha de detalhes: o card completo da prova. O render() redesenha a folha aberta, então ela acompanha as caixinhas. */
+const folhaHtml = p => `<div class="folha-top"><button class="btn sm" data-fecha="1">Fechar ✕</button></div>${cardProva(p)}`;
+function abreFolha(id){
+  const f = $("#folha"), p = D.provas.find(x => x.id === id); if (!p) return;
+  f.dataset.id = id; f.innerHTML = folhaHtml(p); f.showModal(); f.scrollTop = 0; marcaLegendasLongas();
+}
+function atualizaFolha(){
+  const f = $("#folha"); if (!f.open) return;
+  const p = D.provas.find(x => x.id === f.dataset.id); if (!p) return f.close();
+  const aberta = !!f.querySelector(".legenda.aberta");
+  f.innerHTML = folhaHtml(p);
+  if (aberta) f.querySelector(".legenda")?.classList.add("aberta");
 }
 
 function viewPostagens(){
@@ -537,13 +620,16 @@ document.addEventListener("click", e => {
   if (t.closest("nav.tabs button")) { tab = t.closest("button").dataset.tab; renderView(); return; }
   if (t.dataset.goto) { e.preventDefault(); tab = t.dataset.goto; renderView(); $("nav.tabs").scrollIntoView({behavior: "smooth"}); return; }
   if (t.classList.contains("legenda")) { t.classList.toggle("aberta"); return; }
+  if (t.closest("[data-fecha]") || t.id === "folha") { $("#folha").close(); return; }   // botão Fechar ou toque no fundo
+  const mini = t.closest("[data-abre]");
+  if (mini && !t.closest("input,label")) return abreFolha(mini.dataset.abre);
   if (t.id === "btnAdmin") {
     admin = !admin; lsSet("gincana_admin", admin ? "1" : "0");
     if (admin) carregarRascunho(); else D = structuredClone(publicado);
     render(); return;
   }
   if (!admin) return;
-  if (t.dataset.edit) return dlgProva(t.dataset.edit);
+  if (t.dataset.edit) { $("#folha").close(); return dlgProva(t.dataset.edit); }
   if (t.dataset.criar) { const post = IG.postagens.find(x => String(x.id) === t.dataset.criar); if (post) dlgProva(null, provaDaPostagem(post)); return; }
   if (t.dataset.ign) {
     const k = t.dataset.ign;
@@ -583,7 +669,12 @@ document.addEventListener("change", e => {
   const prova = id => D.provas.find(x => x.id === id);
   if (ds.tg) {
     const [campo, pid] = ds.tg.split("|"), p = prova(pid);
-    if (p && ["enviada", "postada", "anulada"].includes(campo)) { p[campo] = e.target.checked; salvarRascunho(); }
+    if (p && ["enviada", "postada", "anulada"].includes(campo)) {
+      p[campo] = e.target.checked;
+      // Caixinha no quadro: o card desliza para a nova coluna (View Transitions; sem suporte ou com movimento reduzido, só redesenha)
+      const anima = e.target.closest(".kanban, .anuladas") && document.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+      anima ? document.startViewTransition(salvarRascunho) : salvarRascunho();
+    }
   } else if (ds.it) {
     const [pid, i] = ds.it.split("|"), p = prova(pid);
     if (p && p.itens[+i]) {
@@ -601,7 +692,10 @@ document.addEventListener("change", e => {
   }
 });
 $("#busca").addEventListener("input", () => renderView());
-$("#fCtrl").addEventListener("input", () => renderView());
+document.addEventListener("keydown", e => {
+  const m = e.target.closest?.("[data-abre]");
+  if (m && e.target === m && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); abreFolha(m.dataset.abre); }
+});
 window.addEventListener("resize", marcaLegendasLongas);
 
 carregar();

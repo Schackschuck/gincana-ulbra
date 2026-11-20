@@ -8,7 +8,7 @@ Site da nossa equipe na gincana escolar. Mostra as provas que a escola passou e 
 
 Abra o site. Há três abas:
 
-- **Provas:** um card por prova, com o nome, a descrição e o prazo (quando houver), a lista de quem faz a prova e o controle **Enviada** / **Postada no Instagram** (este último só nas provas cujas regras mandam postar). O filtro ao lado da busca mostra só o que falta enviar ou postar.
+- **Provas:** um quadro kanban com as colunas **A fazer**, **Em andamento** (já tem gente escalada ou algum item marcado), **Falta postar** (enviada, mas a prova manda postar e ainda não foi postada) e **Feitas**. As anuladas ficam recolhidas embaixo. A coluna sai sozinha das caixinhas: não existe campo próprio no `data.json`. Cada card mostra nome, horário, pessoas, progresso dos itens e pontos. Tocar no card abre os detalhes: regras, itens, pessoas, colocação e o controle **Enviada** / **Postada no Instagram** (este último só nas provas cujas regras mandam postar). No celular, as colunas deslizam para o lado.
 - **Postagens da gincana:** as postagens do Instagram [@gincanamartinholutero](https://www.instagram.com/gincanamartinholutero/), trazidas automaticamente pelo robô (veja abaixo). As que ainda não viraram prova aparecem como **Nova**, e o site mostra um aviso no topo.
 - **Por aluno:** uma tabela com cada pessoa e as provas dela. Nomes iguais em provas diferentes aparecem numa linha só (maiúsculas, minúsculas e espaços extras não importam).
 
