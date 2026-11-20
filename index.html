@@ -127,6 +127,8 @@ const urlSegura = u => /^https?:\/\//i.test(String(u || "").trim()) ? String(u).
 // Código da postagem no link do Instagram (…/p/CODIGO/, …/reel/CODIGO/), para comparar links
 const codigoPost = u => (String(u || "").match(/instagram\.com\/(?:[^/?#]+\/)?(?:p|reels?|tv)\/([A-Za-z0-9_-]+)/) || [])[1] || "";
 const TIPO = {IMAGE: "Foto", VIDEO: "Vídeo", CAROUSEL_ALBUM: "Carrossel"};
+// Palpite inicial de "a prova manda postar": as regras falam em postar/publicar. O organizador pode corrigir em "Editar".
+const mandaPostar = s => /\bpost(ar|ad|ag)|\bpublic(ar|ad|a[çc])/i.test(String(s || ""));
 
 /* Garante o formato atual dos dados. Converte dados antigos (atribuicoes/categorias), por exemplo num rascunho salvo. */
 function normaliza(d){
@@ -139,7 +141,8 @@ function normaliza(d){
     const vistos = new Set(), pessoas = [];
     for (const n of brutos.map(limpaNome)) if (n && !vistos.has(n.toLowerCase())) { vistos.add(n.toLowerCase()); pessoas.push(n); }
     return {id: p.id || uid("p"), nome: limpaNome(p.nome), descricao: p.descricao || "", prazo: p.prazo || "", pessoas,
-      postGincana: p.postGincana || "", nossoPost: p.nossoPost || "", enviada: !!p.enviada, postada: !!p.postada};
+      postGincana: p.postGincana || "", nossoPost: p.nossoPost || "", enviada: !!p.enviada,
+      postar: typeof p.postar === "boolean" ? p.postar : mandaPostar(p.descricao), postada: !!p.postada};
   });
   const ignorados = Array.isArray(d.ignorados) ? d.ignorados.map(String) : [];
   return {titulo: d.titulo || "Gincana Escolar", atualizado: d.atualizado || "", alunos, provas, ignorados};
@@ -214,7 +217,7 @@ function ctrlProva(p){
     ? `<label class="chip ${p[campo] ? "c-ok" : "c-no"}"><input type="checkbox" data-tg="${campo}|${p.id}" ${p[campo] ? "checked" : ""}>${p[campo] ? sim : nao}</label>`
     : `<span class="chip ${p[campo] ? "c-ok" : "c-no"}">${p[campo] ? "✔ " + sim : "✗ " + nao}</span>`;
   const lg = urlSegura(p.postGincana), ln = urlSegura(p.nossoPost);
-  return `<div class="ctrl">${item("enviada", "Enviada", "Falta enviar")}${item("postada", "Postada no Instagram", "Falta postar")}</div>
+  return `<div class="ctrl">${item("enviada", "Enviada", "Falta enviar")}${p.postar ? item("postada", "Postada no Instagram", "Falta postar") : ""}</div>
     ${lg || ln ? `<div class="links">${lg ? `<a href="${esc(lg)}" target="_blank" rel="noopener">Postagem da gincana ↗</a>` : ""}${ln ? `<a href="${esc(ln)}" target="_blank" rel="noopener">Nosso post ↗</a>` : ""}</div>` : ""}`;
 }
 
@@ -236,9 +239,9 @@ function viewProvas(){
   const q = busca(), fc = $("#fCtrl").value;
   const ps = D.provas.filter(p =>
     (!q || (p.nome + " " + p.descricao + " " + p.pessoas.join(" ")).toLowerCase().includes(q)) &&
-    (fc !== "falta-enviar" || !p.enviada) && (fc !== "falta-postar" || !p.postada) && (fc !== "completas" || (p.enviada && p.postada)));
-  const tot = D.provas.length;
-  const resumo = tot ? `<div class="meta" style="margin-bottom:10px">${tot} prova${tot > 1 ? "s" : ""} · enviadas: ${D.provas.filter(p => p.enviada).length}/${tot} · postadas no Instagram: ${D.provas.filter(p => p.postada).length}/${tot}</div>` : "";
+    (fc !== "falta-enviar" || !p.enviada) && (fc !== "falta-postar" || (p.postar && !p.postada)) && (fc !== "completas" || (p.enviada && (!p.postar || p.postada))));
+  const tot = D.provas.length, postam = D.provas.filter(p => p.postar);
+  const resumo = tot ? `<div class="meta" style="margin-bottom:10px">${tot} prova${tot > 1 ? "s" : ""} · enviadas: ${D.provas.filter(p => p.enviada).length}/${tot}${postam.length ? ` · postadas no Instagram: ${postam.filter(p => p.postada).length}/${postam.length}` : ""}</div>` : "";
   $("#view").innerHTML = resumo + (ps.length
     ? `<div class="grid">${ps.map(cardProva).join("")}</div>`
     : `<div class="empty">${tot ? "Nenhuma prova encontrada." : "Nenhuma prova cadastrada ainda."}</div>`);
@@ -348,11 +351,11 @@ function provaDaPostagem(post){
   const leg = String(post.legenda || "").trim();
   let nome = leg.split("\n").map(s => s.trim()).find(Boolean) || "Prova";
   if (nome.length > 80) nome = nome.slice(0, 79).trimEnd() + "…";
-  return {nome, descricao: leg, postGincana: post.link || ""};
+  return {nome, descricao: leg, postGincana: post.link || "", postar: mandaPostar(leg)};
 }
 
 function dlgProva(id, base){
-  const vazio = {id:"", nome:"", descricao:"", prazo:"", pessoas:[], postGincana:"", nossoPost:"", enviada:false, postada:false};
+  const vazio = {id:"", nome:"", descricao:"", prazo:"", pessoas:[], postGincana:"", nossoPost:"", enviada:false, postar:false, postada:false};
   const p = id ? D.provas.find(x => x.id === id) : {...vazio, ...(base || {})};
   const pessoas = [...p.pessoas];
   const d = $("#dlg");
@@ -370,7 +373,8 @@ function dlgProva(id, base){
     <div class="lbl" style="margin-top:12px">Controle:</div>
     <div class="row">
       <label class="ck"><input type="checkbox" id="pEnv" ${p.enviada ? "checked" : ""}> Enviada</label>
-      <label class="ck"><input type="checkbox" id="pPos" ${p.postada ? "checked" : ""}> Postada no Instagram</label>
+      <label class="ck"><input type="checkbox" id="pMand" ${p.postar ? "checked" : ""}> A prova manda postar no Instagram</label>
+      <label class="ck" id="pPosLbl" ${p.postar ? "" : "hidden"}><input type="checkbox" id="pPos" ${p.postada ? "checked" : ""}> Postada no Instagram</label>
     </div>
     <div class="row"><input id="pNosso" placeholder="Link do nosso post no Instagram (opcional)" value="${esc(p.nossoPost)}"></div>
     <div class="row"><input id="pPostG" placeholder="Link da postagem da gincana com esta prova (opcional)" value="${esc(p.postGincana)}"></div>
@@ -402,13 +406,15 @@ function dlgProva(id, base){
   };
   $("#pAddPessoa").onclick = () => { adicionaDigitado(); $("#pPessoa").focus(); };
   $("#pPessoas").onclick = e => { const i = e.target.dataset?.rmp; if (i !== undefined) { pessoas.splice(+i, 1); desenhaPessoas(); } };
+  $("#pMand").onchange = e => { $("#pPosLbl").hidden = !e.target.checked; };
   $("#pCancel").onclick = () => d.close();
   if (id) $("#pDel").onclick = () => { if (confirm("Excluir esta prova?")) { D.provas = D.provas.filter(x => x.id !== id); d.close(); salvarRascunho(); } };
   $("#pOk").onclick = () => {
     const nome = limpaNome($("#pNome").value); if (!nome) { $("#pNome").focus(); return; }
     adicionaDigitado(); // não perde um nome digitado sem apertar Enter
     const novo = {id: p.id || uid("p"), nome, descricao: $("#pDesc").value.trim(), prazo: $("#pPrazo").value, pessoas: [...pessoas],
-      postGincana: $("#pPostG").value.trim(), nossoPost: $("#pNosso").value.trim(), enviada: $("#pEnv").checked, postada: $("#pPos").checked};
+      postGincana: $("#pPostG").value.trim(), nossoPost: $("#pNosso").value.trim(), enviada: $("#pEnv").checked,
+      postar: $("#pMand").checked, postada: $("#pMand").checked && $("#pPos").checked};
     if (id) D.provas[D.provas.findIndex(x => x.id === id)] = novo; else D.provas.push(novo);
     d.close(); salvarRascunho();
   };

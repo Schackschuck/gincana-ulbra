@@ -8,7 +8,7 @@ Site da nossa equipe na gincana escolar. Mostra as provas que a escola passou e 
 
 Abra o site. Há três abas:
 
-- **Provas:** um card por prova, com o nome, a descrição e o prazo (quando houver), a lista de quem faz a prova e o controle **Enviada** / **Postada no Instagram**. O filtro ao lado da busca mostra só o que falta enviar ou postar.
+- **Provas:** um card por prova, com o nome, a descrição e o prazo (quando houver), a lista de quem faz a prova e o controle **Enviada** / **Postada no Instagram** (este último só nas provas cujas regras mandam postar). O filtro ao lado da busca mostra só o que falta enviar ou postar.
 - **Postagens da gincana:** as postagens do Instagram [@gincanamartinholutero](https://www.instagram.com/gincanamartinholutero/), trazidas automaticamente pelo robô (veja abaixo). As que ainda não viraram prova aparecem como **Nova**, e o site mostra um aviso no topo.
 - **Por aluno:** uma tabela com cada pessoa e as provas dela. Nomes iguais em provas diferentes aparecem numa linha só (maiúsculas, minúsculas e espaços extras não importam).
 
@@ -120,6 +120,7 @@ Formato do `data.json`:
       "prazo": "2026-12-01",
       "pessoas": ["Fulano", "Ciclana"],
       "enviada": false,
+      "postar": true,
       "postada": false,
       "nossoPost": "https://www.instagram.com/p/...",
       "postGincana": "https://www.instagram.com/p/..."
@@ -129,7 +130,7 @@ Formato do `data.json`:
 }
 ```
 
-`alunos` é só a lista de sugestões; quem faz cada prova fica em `pessoas`, como texto. `descricao`, `prazo`, `nossoPost` e `postGincana` podem ficar vazios (`""`). A prova fica ligada a uma postagem da gincana quando `postGincana` tem o link dela.
+`postar` diz se as regras da prova mandam postar no Instagram; só nesse caso o site mostra o controle **Postada no Instagram** (se faltar, o site deduz pela descrição, procurando "postar"/"publicar"). `alunos` é só a lista de sugestões; quem faz cada prova fica em `pessoas`, como texto. `descricao`, `prazo`, `nossoPost` e `postGincana` podem ficar vazios (`""`). A prova fica ligada a uma postagem da gincana quando `postGincana` tem o link dela.
 
 ### Testar localmente
 
