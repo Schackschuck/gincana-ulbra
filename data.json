@@ -1,6 +1,6 @@
 {
   "titulo": "Gincana Escolar",
-  "atualizado": "2026-11-20T02:14:51.428Z",
+  "atualizado": "2026-11-20T02:34:17.756Z",
   "alunos": [],
   "provas": [
     {
@@ -18,7 +18,8 @@
       "hora": "",
       "itens": [],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     },
     {
       "id": "paix4ea",
@@ -35,7 +36,8 @@
       "hora": "15:00",
       "itens": [],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     },
     {
       "id": "phf3ylg",
@@ -69,7 +71,8 @@
         }
       ],
       "colocacao": 0,
-      "pontos": 1500
+      "pontos": 1500,
+      "pontosItem": 0
     },
     {
       "id": "pk6xmlc",
@@ -86,7 +89,8 @@
       "hora": "",
       "itens": [],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     },
     {
       "id": "pisgz91",
@@ -103,7 +107,8 @@
       "hora": "10:00",
       "itens": [],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     },
     {
       "id": "pewtxcg",
@@ -120,7 +125,8 @@
       "hora": "21:00",
       "itens": [],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     },
     {
       "id": "piy1b60",
@@ -150,7 +156,8 @@
         }
       ],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     },
     {
       "id": "prmtzae",
@@ -180,7 +187,8 @@
         }
       ],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     },
     {
       "id": "psbnu1h",
@@ -197,7 +205,8 @@
       "hora": "21:00",
       "itens": [],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     },
     {
       "id": "pdbk2ug",
@@ -259,7 +268,8 @@
         }
       ],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     },
     {
       "id": "ptyromo",
@@ -285,12 +295,13 @@
         }
       ],
       "colocacao": 0,
-      "pontos": 700
+      "pontos": 700,
+      "pontosItem": 0
     },
     {
       "id": "p8sz1z6",
       "nome": "Prova para os Pais – Farmar Aura no Colégio",
-      "descricao": "Prova para os Pais\nPara: Pais Inscritos\nA equipe deverá selecionar 3 pais ou responsáveis inscritos na gincana para participar desta prova\nTrazer 1 aluno, que ficará responsável por realizar a filmagem.\nOs pais deverão cumprir o desafio de “farmar aura no colégio”, mostrando todo o seu talento, estilo e criatividade!\nO aluno responsável deverá filmar a participação dos pais e publicar o vídeo no grupo da turma, marcando o perfil @gincanamartinholutero.\nAtenção: Os participantes já podem começar a treinar!\nA realização será as 22h.\nA postagem Deverá ocorrer até as 00h\n\nCaprichem na criatividade e mostrem que os pais também sabem farmar aura!\n\n500 PONTOS EXTRAS PARA EQUIPE QUE ALCANÇAR 100 LIKES E 50 COMPARTILHAMENTO NA POSTAGEM ATÉ AS 3H DA MANHÃ\n\n🕰 HORÁRIO DA PROVA: 22h\n\n📦 PONTUAÇÃO:\nProva Cumprida 700 pontos",
+      "descricao": "Prova para os Pais\nPara: Pais Inscritos\nA equipe deverá selecionar 3 pais ou responsáveis inscritos na gincana para participar desta prova\nTrazer 1 aluno, que ficará responsável por realizar a filmagem.\nOs pais deverão cumprir o desafio de “farmar aura no colégio”, mostrando todo o seu talento, estilo e criatividade!\nO aluno responsável deverá filmar a participação dos pais e publicar o vídeo no grupo da turma, marcando o perfil @gincanamartinholutero.\nAtenção: Os participantes já podem começar a treinar!\nA realização será as 22h.\nA postagem Deverá ocorrer até as 00h\n\nCaprichem na criatividade e mostrem que os pais também sabem farmar aura!\n\n500 PONTOS EXTRAS PARA EQUIPE QUE ALCANÇAR 100 LIKES E 50 COMPARTILHAMENTO NA POSTAGEM ATÉ AS 3H DA MANHÃ\n\n🕰 HORÁRIO DA PROVA: 22h\n\n📦 PONTUAÇÃO:\nProva Cumprida 700 pontos\n\nATUALIZAÇÃO (post \"Atenção: Postagens Aura dos Pais\", 19/11): Nas provas de interação do Instagram, podem ser considerados até 50 comentários e 50 curtidas (likes).",
       "prazo": "2026-11-19",
       "pessoas": [],
       "postGincana": "https://www.instagram.com/p/Df8PM2gAOYX/",
@@ -315,7 +326,8 @@
         }
       ],
       "colocacao": 0,
-      "pontos": 700
+      "pontos": 700,
+      "pontosItem": 0
     },
     {
       "id": "p7ydibm",
@@ -332,7 +344,8 @@
       "hora": "22:30",
       "itens": [],
       "colocacao": 2,
-      "pontos": 500
+      "pontos": 500,
+      "pontosItem": 0
     },
     {
       "id": "pq7pbce",
@@ -430,7 +443,8 @@
         }
       ],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 500,
+      "pontosItem": 50
     },
     {
       "id": "pjmh3r5",
@@ -447,7 +461,8 @@
       "hora": "00:00",
       "itens": [],
       "colocacao": 1,
-      "pontos": 700
+      "pontos": 700,
+      "pontosItem": 0
     },
     {
       "id": "p2at5in",
@@ -464,7 +479,39 @@
       "hora": "21:00",
       "itens": [],
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
+    },
+    {
+      "id": "p7fs6lh",
+      "nome": "Um Papo com a Barata!",
+      "descricao": "PROVA – UM PAPO COM A BARATA!\nPara: Alunos\n\nA equipe deverá produzir um vídeo mostrando uma conversa entre o participante da Prova do Rango e uma ou mais baratas que estiveram presentes naquele momento.\nA ideia é entrevistar o participante sobre sua experiência durante a prova e, na sequência, dar voz à barata que estava acompanhando tudo de perto!\nVale vozes diferentes, entrevistas, efeitos especiais e muita criatividade para tornar essa conversa divertida e engraçada.\nPostagem: O vídeo deverá ser publicado no grupo da turma, marcando o perfil @gincanamartinholutero, até a 01h da madrugada.\nSoltem a imaginação! Queremos ouvir os dois lados dessa história: o de quem comeu e o de quem ficou só observando (a barata)!",
+      "prazo": "2026-11-20",
+      "hora": "01:00",
+      "pessoas": [],
+      "itens": [
+        {
+          "texto": "Gravar a entrevista com o participante da Prova do Rango",
+          "feito": false
+        },
+        {
+          "texto": "Gravar a parte da barata (voz da barata)",
+          "feito": false
+        },
+        {
+          "texto": "Publicar o vídeo marcando @gincanamartinholutero até 01h",
+          "feito": false
+        }
+      ],
+      "postGincana": "https://www.instagram.com/p/Df8lkGegFBd/",
+      "nossoPost": "",
+      "enviada": false,
+      "postar": true,
+      "postada": false,
+      "anulada": false,
+      "colocacao": 0,
+      "pontos": 0,
+      "pontosItem": 0
     }
   ],
   "ignorados": []
