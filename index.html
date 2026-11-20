@@ -189,6 +189,7 @@ function carregarRascunho(){
       raw.provas = raw.provas.map(p => {
         const q = {...(pub[p.id] || {}), ...p}, b = pub[p.id];
         if (b && !p.hora) q.hora = b.hora;
+        if (b && !(+p.pontosItem > 0) && b.pontosItem > 0) q.pontosItem = b.pontosItem;
         if (b && !(p.itens || []).length) q.itens = b.itens;
         else if (b && maisNovo) {
           // Itens que entraram na versão publicada aparecem no rascunho, na ordem de lá, mantendo o que já foi marcado
@@ -255,9 +256,8 @@ function renderView(){
 const busca = () => $("#busca").value.trim().toLowerCase();
 const fmtNum = n => (n || 0).toLocaleString("pt-BR");
 
-/* Prova feita = enviada, postada (se as regras mandam postar) e todos os itens marcados.
-   Em prova de pontos por item (ex.: lista de objetos) os itens não são obrigatórios: cada um só soma pontos. */
-const feita = p => p.enviada && (!p.postar || p.postada) && (p.pontosItem > 0 || p.itens.every(i => i.feito));
+/* Prova feita = enviada e postada (se as regras mandam postar). Os itens são só uma lista de apoio: não precisam estar todos marcados. */
+const feita = p => p.enviada && (!p.postar || p.postada);
 // Ordem da lista: primeiro as que faltam, pelo prazo/horário mais cedo (sem prazo vão para o fim); depois as feitas; as anuladas por último
 const chaveOrdem = p => (p.anulada ? "2" : feita(p) ? "1" : "0") + (/^\d{4}-\d{2}-\d{2}$/.test(p.prazo) ? p.prazo : "9999-99-99") + (p.hora || "99:99");
 
@@ -440,7 +440,7 @@ function dlgProva(id, base){
     <div class="row"><input id="pNome" placeholder="Nome da prova" value="${esc(p.nome)}"></div>
     <div class="row"><input id="pPrazo" type="date" value="${esc(p.prazo)}" title="Prazo (opcional)" style="flex:0 1 200px"><input id="pHora" type="time" value="${esc(p.hora)}" title="Horário de entrega (opcional)" style="flex:0 1 130px"><span class="meta">Prazo e horário de entrega (opcionais)</span></div>
     <div class="row"><textarea id="pDesc" placeholder="Descrição / regras (opcional)">${esc(p.descricao)}</textarea></div>
-    <div class="lbl">Itens / tarefas da prova (um por linha, opcional). A prova só conta como feita com todos marcados:</div>
+    <div class="lbl">Itens / tarefas da prova (um por linha, opcional):</div>
     <div class="row"><textarea id="pItens" placeholder="Ex.: Quiz – 3 pessoas">${esc(p.itens.map(i => i.texto).join("\n"))}</textarea></div>
     <div class="row"><input id="pPtsItem" type="number" min="0" step="10" value="${p.pontosItem || ""}" placeholder="0" style="flex:0 1 110px"><span class="meta">Pontos por item marcado (só para provas que pontuam por item, como uma lista de objetos; deixe vazio nas outras)</span></div>
     <div class="lbl">Quem vai fazer esta prova (digite qualquer nome e aperte Enter):</div>
