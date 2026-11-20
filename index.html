@@ -114,7 +114,7 @@
   dialog.folha:not([open]){opacity:0;transform:translateY(28px)}
   @starting-style{dialog.folha[open]{opacity:0;transform:translateY(28px)}}
   dialog.folha::backdrop{background:rgba(0,0,0,.35)}
-  .folha-top{position:sticky;top:0;z-index:1;display:flex;justify-content:flex-end;padding:8px 10px 0;
+  .folha-top{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;gap:8px;padding:8px 10px 0;
     background:linear-gradient(#fff 60%,rgba(255,255,255,0))}
   .folha .card{border:0;opacity:1;padding-top:4px}
   @media (max-width:700px){
@@ -394,7 +394,8 @@ function viewProvas(){
 }
 
 /* Folha de detalhes: o card completo da prova. O render() redesenha a folha aberta, então ela acompanha as caixinhas. */
-const folhaHtml = p => `<div class="folha-top"><button class="btn sm" data-fecha="1">Fechar ✕</button></div>${cardProva(p)}`;
+// No modo público as caixinhas não aparecem: o botão da esquerda liga o modo organizador ali mesmo
+const folhaHtml = p => `<div class="folha-top">${admin ? "<span></span>" : `<button class="btn sm pri" data-org="1">✏️ Marcar tarefas (modo organizador)</button>`}<button class="btn sm" data-fecha="1">Fechar ✕</button></div>${cardProva(p)}`;
 function abreFolha(id){
   const f = $("#folha"), p = D.provas.find(x => x.id === id); if (!p) return;
   f.dataset.id = id; f.innerHTML = folhaHtml(p); f.showModal(); f.scrollTop = 0; marcaLegendasLongas();
@@ -621,6 +622,7 @@ document.addEventListener("click", e => {
   if (t.dataset.goto) { e.preventDefault(); tab = t.dataset.goto; renderView(); $("nav.tabs").scrollIntoView({behavior: "smooth"}); return; }
   if (t.classList.contains("legenda")) { t.classList.toggle("aberta"); return; }
   if (t.closest("[data-fecha]") || t.id === "folha") { $("#folha").close(); return; }   // botão Fechar ou toque no fundo
+  if (t.closest("[data-org]")) { $("#btnAdmin").click(); return; }
   const mini = t.closest("[data-abre]");
   if (mini && !t.closest("input,label")) return abreFolha(mini.dataset.abre);
   if (t.id === "btnAdmin") {
