@@ -118,19 +118,23 @@ Formato do `data.json`:
       "nome": "Nome da prova",
       "descricao": "Regras da prova",
       "prazo": "2026-12-01",
+      "hora": "21:00",
       "pessoas": ["Fulano", "Ciclana"],
+      "itens": [{ "texto": "Quiz – 3 pessoas", "feito": false }],
       "enviada": false,
       "postar": true,
       "postada": false,
       "nossoPost": "https://www.instagram.com/p/...",
-      "postGincana": "https://www.instagram.com/p/..."
+      "postGincana": "https://www.instagram.com/p/...",
+      "colocacao": 2,
+      "pontos": 1200
     }
   ],
   "ignorados": ["id de postagem da gincana marcada como 'não é prova'"]
 }
 ```
 
-`postar` diz se as regras da prova mandam postar no Instagram; só nesse caso o site mostra o controle **Postada no Instagram** (se faltar, o site deduz pela descrição, procurando "postar"/"publicar"). `alunos` é só a lista de sugestões; quem faz cada prova fica em `pessoas`, como texto. `descricao`, `prazo`, `nossoPost` e `postGincana` podem ficar vazios (`""`). A prova fica ligada a uma postagem da gincana quando `postGincana` tem o link dela.
+`hora` é o horário de entrega (opcional). `itens` são as tarefas da prova; ela só conta como **feita** com todos os itens marcados, enviada e postada (se precisar postar). A lista mostra primeiro as provas que faltam, pelo prazo/horário mais cedo, e as feitas por último. `colocacao` (1 a 6, 0 = sem colocação) e `pontos` são a nossa pontuação na prova; ao escolher a colocação, o site sugere os pontos lendo "Prova cumprida X pontos" e a tabela "Nº Lugar" das regras, e o topo da aba mostra o total. `postar` diz se as regras da prova mandam postar no Instagram; só nesse caso o site mostra o controle **Postada no Instagram** (se faltar, o site deduz pela descrição, procurando "postar"/"publicar"). `alunos` é só a lista de sugestões; quem faz cada prova fica em `pessoas`, como texto. `descricao`, `prazo`, `nossoPost` e `postGincana` podem ficar vazios (`""`). A prova fica ligada a uma postagem da gincana quando `postGincana` tem o link dela.
 
 ### Testar localmente
 
