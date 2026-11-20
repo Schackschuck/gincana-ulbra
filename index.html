@@ -180,8 +180,21 @@ function carregarRascunho(){
   const r = lsGet(LS_DRAFT); if (!r) return;
   try {
     const raw = JSON.parse(r), pub = Object.fromEntries(publicado.provas.map(p => [p.id, p]));
-    // Rascunho salvo por uma versão antiga do site: os campos que ele não tinha (itens, hora...) vêm da versão publicada
-    if (Array.isArray(raw.provas)) raw.provas = raw.provas.map(p => ({...(pub[p.id] || {}), ...p}));
+    if (Array.isArray(raw.provas)) {
+      // Rascunho de uma versão antiga do site: campos que ele não tinha ou deixou vazios (itens, horário) vêm da versão publicada
+      raw.provas = raw.provas.map(p => {
+        const q = {...(pub[p.id] || {}), ...p}, b = pub[p.id];
+        if (b && !p.hora) q.hora = b.hora;
+        if (b && !(p.itens || []).length) q.itens = b.itens;
+        return q;
+      });
+      // O site foi publicado de novo depois que o rascunho começou: as provas novas de lá entram no rascunho
+      if (String(publicado.atualizado) > String(raw.atualizado || "")) {
+        const tem = new Set(raw.provas.map(p => p.id));
+        raw.provas.push(...publicado.provas.filter(p => !tem.has(p.id)));
+        raw.atualizado = publicado.atualizado;
+      }
+    }
     D = normaliza(raw);
   } catch(e){}
 }
