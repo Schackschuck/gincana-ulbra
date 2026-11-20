@@ -1,6 +1,6 @@
 {
   "titulo": "Gincana Escolar",
-  "atualizado": "2026-11-20T02:03:18.196Z",
+  "atualizado": "2026-11-20T02:07:10.523Z",
   "alunos": [],
   "provas": [
     {
@@ -18,7 +18,8 @@
       "itens": [],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "paix4ea",
@@ -35,7 +36,8 @@
       "itens": [],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "phf3ylg",
@@ -69,7 +71,8 @@
       ],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "pk6xmlc",
@@ -86,7 +89,8 @@
       "itens": [],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "pisgz91",
@@ -103,7 +107,8 @@
       "itens": [],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "pewtxcg",
@@ -120,7 +125,8 @@
       "itens": [],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "p2at5in",
@@ -137,7 +143,8 @@
       "itens": [],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "piy1b60",
@@ -167,7 +174,8 @@
       ],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "prmtzae",
@@ -197,7 +205,8 @@
       ],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "psbnu1h",
@@ -214,7 +223,8 @@
       "itens": [],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "pdbk2ug",
@@ -276,7 +286,8 @@
       ],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "ptyromo",
@@ -302,7 +313,8 @@
       ],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "p8sz1z6",
@@ -332,7 +344,8 @@
       ],
       "colocacao": 0,
       "pontos": 0,
-      "anulada": false
+      "anulada": false,
+      "pontosItem": 0
     },
     {
       "id": "p7ydibm",
@@ -349,7 +362,8 @@
       "postada": false,
       "anulada": false,
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     },
     {
       "id": "pq7pbce",
@@ -447,7 +461,8 @@
       "postada": false,
       "anulada": false,
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 50
     },
     {
       "id": "pjmh3r5",
@@ -464,7 +479,8 @@
       "postada": false,
       "anulada": false,
       "colocacao": 0,
-      "pontos": 0
+      "pontos": 0,
+      "pontosItem": 0
     }
   ],
   "ignorados": []
