@@ -1,6 +1,6 @@
 {
   "titulo": "Gincana Escolar",
-  "atualizado": "2026-11-20T01:54:03.072Z",
+  "atualizado": "2026-11-20T02:03:18.196Z",
   "alunos": [],
   "provas": [
     {
@@ -229,6 +229,22 @@
       "postada": false,
       "hora": "21:00",
       "itens": [
+        {
+          "texto": "1º bloco (21h) – Desfile do Cosplay",
+          "feito": false
+        },
+        {
+          "texto": "1º bloco (21h) – Corrida de Perna de Pau",
+          "feito": false
+        },
+        {
+          "texto": "1º bloco (21h) – Entrega da Reprodução do Quadro",
+          "feito": false
+        },
+        {
+          "texto": "1º bloco (21h) – Letra Bonita (pessoa para escrever o texto)",
+          "feito": false
+        },
         {
           "texto": "Quiz – 3 pessoas (alunos, ex-alunos e pais)",
           "feito": false

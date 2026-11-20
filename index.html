@@ -181,15 +181,21 @@ function carregarRascunho(){
   try {
     const raw = JSON.parse(r), pub = Object.fromEntries(publicado.provas.map(p => [p.id, p]));
     if (Array.isArray(raw.provas)) {
+      const maisNovo = String(publicado.atualizado) > String(raw.atualizado || "");   // site publicado depois que o rascunho começou
       // Rascunho de uma versão antiga do site: campos que ele não tinha ou deixou vazios (itens, horário) vêm da versão publicada
       raw.provas = raw.provas.map(p => {
         const q = {...(pub[p.id] || {}), ...p}, b = pub[p.id];
         if (b && !p.hora) q.hora = b.hora;
         if (b && !(p.itens || []).length) q.itens = b.itens;
+        else if (b && maisNovo) {
+          // Itens que entraram na versão publicada aparecem no rascunho, na ordem de lá, mantendo o que já foi marcado
+          const meus = new Map((p.itens || []).map(i => [limpaNome(i && i.texto), i]));
+          q.itens = [...b.itens.map(i => meus.get(i.texto) || i), ...[...meus].filter(([t]) => !b.itens.some(i => i.texto === t)).map(([, i]) => i)];
+        }
         return q;
       });
-      // O site foi publicado de novo depois que o rascunho começou: as provas novas de lá entram no rascunho
-      if (String(publicado.atualizado) > String(raw.atualizado || "")) {
+      // As provas novas da versão publicada entram no rascunho
+      if (maisNovo) {
         const tem = new Set(raw.provas.map(p => p.id));
         raw.provas.push(...publicado.provas.filter(p => !tem.has(p.id)));
         raw.atualizado = publicado.atualizado;
