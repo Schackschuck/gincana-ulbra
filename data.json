@@ -1,6 +1,6 @@
 {
   "titulo": "Gincana Escolar",
-  "atualizado": "2026-11-20T03:36:10.026Z",
+  "atualizado": "2026-11-20T03:36:55.382Z",
   "alunos": [],
   "provas": [
     {
@@ -500,6 +500,49 @@
           "feito": false
         }
       ],
+      "colocacao": 0,
+      "pontos": 0,
+      "pontosItem": 0
+    },
+    {
+      "id": "pzrat4i",
+      "nome": "Prova Final – Criando um Super-Herói",
+      "descricao": "PROVA FINAL – CRIANDO UM SUPER-HERÓI!\nPara: Alunos, ex-alunos, Pais inscritos e não inscritos\nChegou a hora de soltar a imaginação e mostrar toda a criatividade da equipe! Nesta prova, vocês deverão criar um super-herói original, com nome, identidade, poderes especiais.\nA prova será dividida em duas etapas:\n\n1ª ETAPA – APRESENTAÇÃO DO SUPER-HERÓI\nA equipe deverá produzir e postar um vídeo de no mínimo 1 minuto, apresentando o super-herói criado.\nO vídeo deverá mostrar:\n• Nome e identidade do super-herói;\n• Seus poderes e habilidades especiais;\n• O que o torna diferente dos demais heróis.\n\nSegunda parte irá pelo Instagram.\nSerá postada 15 minutos depois que a última turma passar pela prova do terror.\n\n(Cadastrada a partir da folha impressa entregue pela gincana.)",
+      "prazo": "2026-11-20",
+      "hora": "",
+      "pessoas": [],
+      "itens": [
+        {
+          "texto": "Criar o super-herói (nome, identidade e poderes)",
+          "feito": false
+        },
+        {
+          "texto": "Gravar vídeo de no mínimo 1 minuto: nome e identidade",
+          "feito": false
+        },
+        {
+          "texto": "No vídeo: poderes e habilidades especiais",
+          "feito": false
+        },
+        {
+          "texto": "No vídeo: o que o torna diferente dos demais heróis",
+          "feito": false
+        },
+        {
+          "texto": "Postar o vídeo no Instagram",
+          "feito": false
+        },
+        {
+          "texto": "2ª etapa (sai no Instagram 15 min depois da última turma no Terror)",
+          "feito": false
+        }
+      ],
+      "postGincana": "",
+      "nossoPost": "",
+      "enviada": false,
+      "postar": true,
+      "postada": false,
+      "anulada": false,
       "colocacao": 0,
       "pontos": 0,
       "pontosItem": 0
